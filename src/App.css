@@ -343,15 +343,23 @@ body {
   margin: 0 0 6px 0;
   font-size: 14px;
   line-height: 1.5;
+  color: #2C3E50;
+  word-wrap: break-word;
 }
 
 .message-time {
+  display: block;
   font-size: 11px;
   color: #999;
+  margin-top: 4px;
 }
 
 .message.user .message-time {
   color: rgba(255, 255, 255, 0.7);
+}
+
+.message.user .message.buuble p {
+  color: #fff;
 }
 
 .message-bubble.typing {
