@@ -1,0 +1,26 @@
+.berandaScreen {
+  padding: 24px 20px;
+}
+
+.welcomeSection {
+  margin-bottom: 28px;
+}
+
+.welcomeText {
+  font-size: 28px;
+  font-weight: bold;
+  color: #2C3E50;
+  margin-bottom: 8px;
+}
+
+.subtitleText {
+  font-size: 16px;
+  color: #7F8C8D;
+  line-height: 1.5;
+}
+
+.contentList {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}

@@ -1,0 +1,20 @@
+.placeholderScreen {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 500px;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.placeholderScreen h2 {
+  font-size: 24px;
+  color: #2C3E50;
+  margin: 20px 0 10px;
+}
+
+.placeholderScreen p {
+  font-size: 16px;
+  color: #7F8C8D;
+}

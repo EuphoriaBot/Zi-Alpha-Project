@@ -1,12 +1,14 @@
+import styles from './ChatMessage.module.css'
+
 function ChatMessage({ message }) {
   return (
-    <div className={`message ${message.type}`}>
+    <div className={`${styles.message} ${styles[message.type]}`}>
       {message.type === 'bot' && (
-        <div className="message-avatar">🤖</div>
+        <div className={styles.messageAvatar}>🤖</div>
       )}
-      <div className="message-bubble">
+      <div className={styles.messageBubble}>
         <p>{message.text}</p>
-        <span className="message-time">{message.time}</span>
+        <span className={styles.messageTime}>{message.time}</span>
       </div>
     </div>
   )
