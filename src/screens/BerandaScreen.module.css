@@ -1,5 +1,7 @@
 .berandaScreen {
   padding: 24px 20px;
+  background: linear-gradient(180deg, #5B5FE3 0%, #7B7FF3 100%);
+  min-height: 100%;
 }
 
 .welcomeSection {
@@ -9,13 +11,13 @@
 .welcomeText {
   font-size: 28px;
   font-weight: bold;
-  color: #2C3E50;
+  color: #FFFFFF;
   margin-bottom: 8px;
 }
 
 .subtitleText {
   font-size: 16px;
-  color: #7F8C8D;
+  color: rgba(255, 255, 255, 0.9);
   line-height: 1.5;
 }
 

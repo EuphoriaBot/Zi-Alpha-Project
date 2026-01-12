@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Plus, Send, ChevronDown, ChevronUp } from 'lucide-react'
 import ChatMessage from '../components/ChatMessage'
+import styles from './ZiaBotScreen.module.css'
 
 function ZiaBotScreen() {
   const [messages, setMessages] = useState([
@@ -18,27 +19,20 @@ function ZiaBotScreen() {
   const [selectedClass, setSelectedClass] = useState(null)
 
   const subjects = [
-    { id: 1, icon: '📐', name: 'Matematika', color: '#FF6B6B' },
-    { id: 2, icon: '🧪', name: 'IPA', color: '#4ECDC4' },
-    { id: 3, icon: '🌍', name: 'IPS', color: '#45B7D1' },
-    { id: 4, icon: '📝', name: 'Bahasa Indonesia', color: '#96CEB4' },
-    { id: 5, icon: '📺', name: 'Bahasa Inggris', color: '#FFEAA7' },
-    { id: 6, icon: '⚡', name: 'Fisika', color: '#DFE6E9' },
-    { id: 7, icon: '🧬', name: 'Kimia', color: '#74B9FF' },
-    { id: 8, icon: '🦠', name: 'Biologi', color: '#55EFC4' },
+    { id: 1, icon: '📐', name: 'Matematika' },
+    { id: 2, icon: '🧪', name: 'IPA' },
+    { id: 3, icon: '🌍', name: 'IPS' },
+    { id: 4, icon: '📝', name: 'Bahasa Indonesia' },
+    { id: 5, icon: '📺', name: 'Bahasa Inggris' },
+    { id: 6, icon: '⚡', name: 'Fisika' },
+    { id: 7, icon: '🧬', name: 'Kimia' },
+    { id: 8, icon: '🦠', name: 'Biologi' },
   ]
 
   const classes = [
     { id: 7, name: 'Kelas 7' },
     { id: 8, name: 'Kelas 8' },
     { id: 9, name: 'Kelas 9' },
-  ]
-
-  const exampleTopics = [
-    "Contoh: Teorema Pythagoras, Fotosintesis...",
-    "Teorema Pythagoras",
-    "Fotosintesis",
-    "Hukum Newton"
   ]
 
   const handleSend = () => {
@@ -66,53 +60,31 @@ function ZiaBotScreen() {
     }, 1500)
   }
 
-  const handleTopicSelect = (topic) => {
-    const userMessage = {
-      id: messages.length + 1,
-      type: 'user',
-      text: topic,
-      time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
-    }
-    setMessages([...messages, userMessage])
-    setIsTyping(true)
-
-    setTimeout(() => {
-      const botMessage = {
-        id: messages.length + 2,
-        type: 'bot',
-        text: `Baik! Mari kita bahas tentang ${topic}. Apa yang sudah kamu ketahui tentang topik ini? 🎯`,
-        time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
-      }
-      setMessages(prev => [...prev, botMessage])
-      setIsTyping(false)
-    }, 1500)
-  }
-
   return (
-    <div className="ziabot-screen">
+    <div className={styles.ziabotScreen}>
       {/* Header Info */}
-      <div className="chat-header-info">
-        <div className="ai-avatar">🤖</div>
-        <div className="ai-info">
+      <div className={styles.chatHeaderInfo}>
+        <div className={styles.aiAvatar}>🤖</div>
+        <div className={styles.aiInfo}>
           <h3>ZiAbot</h3>
-          <span className="ai-status">AI Study Assistant</span>
+          <span className={styles.aiStatus}>AI Study Assistant</span>
         </div>
       </div>
 
       {/* Description */}
-      <div className="ziabot-description">
+      <div className={styles.ziabotDescription}>
         <p>ZiAbot membantu kamu belajar step by step. Jawaban bukan untuk langsung disalin, tapi untuk dipahami.</p>
       </div>
 
-      {/* Topic Selection - Expandable */}
-      <div className="topic-selection-container">
+      {/* Topic Selection */}
+      <div className={styles.topicSelectionContainer}>
         <button 
-          className="topic-header"
+          className={styles.topicHeader}
           onClick={() => setIsTopicOpen(!isTopicOpen)}
         >
-          <div className="topic-header-content">
-            <span className="topic-icon">📚</span>
-            <div className="topic-header-text">
+          <div className={styles.topicHeaderContent}>
+            <span className={styles.topicIcon}>📚</span>
+            <div className={styles.topicHeaderText}>
               <h4>Pilih Topik</h4>
               <p>Tentukan materi yang ingin dipelajari</p>
             </div>
@@ -121,32 +93,32 @@ function ZiaBotScreen() {
         </button>
 
         {isTopicOpen && (
-          <div className="topic-content">
+          <div className={styles.topicContent}>
             {/* Mata Pelajaran */}
-            <div className="topic-section">
-              <h5 className="section-title">MATA PELAJARAN</h5>
-              <div className="subjects-grid">
+            <div className={styles.topicSection}>
+              <h5 className={styles.sectionTitle}>MATA PELAJARAN</h5>
+              <div className={styles.subjectsGrid}>
                 {subjects.map(subject => (
                   <button
                     key={subject.id}
-                    className={`subject-btn ${selectedSubject === subject.id ? 'active' : ''}`}
+                    className={`${styles.subjectBtn} ${selectedSubject === subject.id ? styles.active : ''}`}
                     onClick={() => setSelectedSubject(subject.id)}
                   >
-                    <span className="subject-icon">{subject.icon}</span>
-                    <span className="subject-name">{subject.name}</span>
+                    <span className={styles.subjectIcon}>{subject.icon}</span>
+                    <span className={styles.subjectName}>{subject.name}</span>
                   </button>
                 ))}
               </div>
             </div>
 
             {/* Kelas */}
-            <div className="topic-section">
-              <h5 className="section-title">KELAS</h5>
-              <div className="class-grid">
+            <div className={styles.topicSection}>
+              <h5 className={styles.sectionTitle}>KELAS</h5>
+              <div className={styles.classGrid}>
                 {classes.map(cls => (
                   <button
                     key={cls.id}
-                    className={`class-btn ${selectedClass === cls.id ? 'active' : ''}`}
+                    className={`${styles.classBtn} ${selectedClass === cls.id ? styles.active : ''}`}
                     onClick={() => setSelectedClass(cls.id)}
                   >
                     {cls.name}
@@ -156,16 +128,16 @@ function ZiaBotScreen() {
             </div>
 
             {/* Topik/Materi */}
-            <div className="topic-section">
-              <h5 className="section-title">TOPIK / MATERI</h5>
-              <div className="topic-input-container">
+            <div className={styles.topicSection}>
+              <h5 className={styles.sectionTitle}>TOPIK / MATERI</h5>
+              <div className={styles.topicInputContainer}>
                 <input
                   type="text"
-                  className="topic-input"
+                  className={styles.topicInput}
                   placeholder="Contoh: Teorema Pythagoras, Fotosintesis..."
                 />
               </div>
-              <button className="apply-context-btn">
+              <button className={styles.applyContextBtn}>
                 ✓ Terapkan Konteks
               </button>
             </div>
@@ -174,15 +146,15 @@ function ZiaBotScreen() {
       </div>
 
       {/* Chat Messages */}
-      <div className="chat-messages">
+      <div className={styles.chatMessages}>
         {messages.map(message => (
           <ChatMessage key={message.id} message={message} />
         ))}
         {isTyping && (
-          <div className="message bot">
-            <div className="message-avatar">🤖</div>
-            <div className="message-bubble typing">
-              <div className="typing-indicator">
+          <div className={styles.typingContainer}>
+            <div className={styles.messageAvatar}>🤖</div>
+            <div className={styles.typingBubble}>
+              <div className={styles.typingIndicator}>
                 <span></span>
                 <span></span>
                 <span></span>
@@ -193,19 +165,19 @@ function ZiaBotScreen() {
       </div>
 
       {/* Input Area */}
-      <div className="chat-input-container">
-        <button className="attach-btn">
+      <div className={styles.chatInputContainer}>
+        <button className={styles.attachBtn}>
           <Plus size={20} />
         </button>
         <input 
           type="text"
-          className="chat-input"
+          className={styles.chatInput}
           placeholder="Tanya ZiA sesuatu..."
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
           onKeyPress={(e) => e.key === 'Enter' && handleSend()}
         />
-        <button className="send-btn" onClick={handleSend}>
+        <button className={styles.sendBtn} onClick={handleSend}>
           <Send size={20} />
         </button>
       </div>

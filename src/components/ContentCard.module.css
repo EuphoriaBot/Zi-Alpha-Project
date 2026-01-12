@@ -1,0 +1,80 @@
+.contentCard {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.contentCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.cardThumbnail {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+}
+
+.cardContent {
+  padding: 18px;
+}
+
+.cardSubject {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #5B5FE3;
+  letter-spacing: 1.2px;
+  margin-bottom: 10px;
+}
+
+.cardTitle {
+  font-size: 18px;
+  font-weight: bold;
+  color: #2C3E50;
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+
+.cardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.durationBadge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #F0F0F0;
+  padding: 8px 14px;
+  border-radius: 14px;
+  font-size: 13px;
+  color: #666;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 8px;
+}
+
+.iconButton {
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  color: #666;
+  transition: color 0.3s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconButton:hover {
+  color: #5B5FE3;
+  transform: scale(1.1);
+}
