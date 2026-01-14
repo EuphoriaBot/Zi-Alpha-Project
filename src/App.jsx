@@ -3,6 +3,7 @@ import Header from './components/Header'
 import BottomNav from './components/BottomNav'
 import BerandaScreen from './screens/BerandaScreen'
 import ZiaBotScreen from './screens/ZiaBotScreen'
+import DiskusiScreen from './screens/DiskusiScreen'
 import SearchScreen from './screens/SearchScreen'
 import ProfileScreen from './screens/ProfileScreen'
 import './App.css'
@@ -16,6 +17,8 @@ function App() {
         return <BerandaScreen />
       case 'ziabot':
         return <ZiaBotScreen />
+      case 'diskusi':
+        return <DiskusiScreen />
       case 'search':
         return <SearchScreen />
       case 'profile':
