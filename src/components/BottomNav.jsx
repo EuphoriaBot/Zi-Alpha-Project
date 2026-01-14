@@ -1,4 +1,4 @@
-import { Home, Search, User, MessageCircle, MessageSquare } from 'lucide-react'
+import { Home, MessageCircle, MessageSquare, Download, User } from 'lucide-react'
 import styles from './BottomNav.module.css'
 
 function BottomNav({ activeTab, setActiveTab }) {
@@ -6,7 +6,7 @@ function BottomNav({ activeTab, setActiveTab }) {
     { id: 'beranda', label: 'Home', icon: Home },
     { id: 'ziabot', label: 'ZiAbot', icon: MessageCircle },
     { id: 'diskusi', label: 'Diskusi', icon: MessageSquare },
-    { id: 'search', label: 'Search', icon: Search },
+    { id: 'downloads', label: 'Downloads', icon: Download },
     { id: 'profile', label: 'Profile', icon: User },
   ]
 

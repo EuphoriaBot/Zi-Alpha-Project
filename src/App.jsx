@@ -4,7 +4,7 @@ import BottomNav from './components/BottomNav'
 import BerandaScreen from './screens/BerandaScreen'
 import ZiaBotScreen from './screens/ZiaBotScreen'
 import DiskusiScreen from './screens/DiskusiScreen'
-import SearchScreen from './screens/SearchScreen'
+import DownloadsScreen from './screens/DownloadsScreen'
 import ProfileScreen from './screens/ProfileScreen'
 import './App.css'
 
@@ -19,8 +19,8 @@ function App() {
         return <ZiaBotScreen />
       case 'diskusi':
         return <DiskusiScreen />
-      case 'search':
-        return <SearchScreen />
+      case 'downloads':
+        return <DownloadsScreen />
       case 'profile':
         return <ProfileScreen />
       default:
