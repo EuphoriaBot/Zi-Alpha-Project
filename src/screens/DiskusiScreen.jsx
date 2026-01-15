@@ -95,7 +95,6 @@ function DiskusiScreen() {
   )
 }
 
-// Question Card Component
 function QuestionCard({ title, subject, subjectColor, author, replies, trending }) {
   return (
     <div className={styles.questionCard}>

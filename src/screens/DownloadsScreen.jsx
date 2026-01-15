@@ -10,7 +10,7 @@ function DownloadsScreen() {
       subject: "Kelas 8",
       size: "45 MB",
       thumbnail: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=300&h=200&fit=crop",
-      status: "ready", // ready, downloading
+      status: "ready",
       progress: 100
     },
     {
@@ -73,7 +73,6 @@ function DownloadsScreen() {
   )
 }
 
-// Video Card Component
 function VideoCard({ title, author, subject, size, thumbnail, status, progress }) {
   return (
     <div className={styles.videoCard}>

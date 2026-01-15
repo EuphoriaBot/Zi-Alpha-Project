@@ -5,7 +5,6 @@
   color: #fff;
 }
 
-/* Header */
 .header {
   display: flex;
   justify-content: space-between;
@@ -42,7 +41,6 @@
   color: #fff;
 }
 
-/* Profile Card */
 .profileCard {
   background: linear-gradient(135deg, #2A2A4A 0%, #1E1E3A 100%);
   margin: 16px 20px;
@@ -93,7 +91,6 @@
   margin: 0;
 }
 
-/* Level Progress */
 .levelProgress {
   margin-top: 16px;
 }
@@ -121,7 +118,6 @@
   text-align: right;
 }
 
-/* Stats Grid */
 .statsGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -169,7 +165,6 @@
   font-weight: 500;
 }
 
-/* Badges Section */
 .badgesSection {
   padding: 0 20px;
 }
