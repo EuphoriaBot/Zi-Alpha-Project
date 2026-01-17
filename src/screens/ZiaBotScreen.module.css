@@ -198,6 +198,7 @@
   font-size: 14px;
   outline: none;
   transition: all 0.3s ease;
+  box-sizing: border-box;
 }
 
 .topicInput:focus {
@@ -236,7 +237,6 @@
   flex-direction: column;
   gap: 16px;
   min-height: 200px;
-  max-height: 400px;
 }
 
 .chatMessages::-webkit-scrollbar {

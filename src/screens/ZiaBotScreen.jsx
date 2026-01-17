@@ -1,68 +1,87 @@
 import { useState } from 'react'
-import { Plus, Send, ChevronDown, ChevronUp } from 'lucide-react'
+import { ChevronDown, ChevronUp, Send, Paperclip } from 'lucide-react'
 import ChatMessage from '../components/ChatMessage'
+import { initialMessages } from '../utility/constants'
 import styles from './ZiaBotScreen.module.css'
 
-function ZiaBotScreen() {
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      type: 'bot',
-      text: 'Halo! Saya ZiA, AI Mentor Anda. Ada yang bisa saya bantu untuk belajar hari ini? 🤖',
-      time: '10:30'
-    }
-  ])
-  const [inputText, setInputText] = useState('')
-  const [isTyping, setIsTyping] = useState(false)
-  const [isTopicOpen, setIsTopicOpen] = useState(true)
+export default function ZiaBotScreen() {
+  const [topicOpen, setTopicOpen] = useState(true)
   const [selectedSubject, setSelectedSubject] = useState(null)
   const [selectedClass, setSelectedClass] = useState(null)
+  const [topicInput, setTopicInput] = useState('')
+  const [input, setInput] = useState('')
+  const [messages, setMessages] = useState(initialMessages)
+  const [isTyping, setIsTyping] = useState(false)
 
   const subjects = [
-    { id: 1, icon: '📐', name: 'Matematika' },
-    { id: 2, icon: '🧪', name: 'IPA' },
-    { id: 3, icon: '🌍', name: 'IPS' },
-    { id: 4, icon: '📝', name: 'Bahasa Indonesia' },
-    { id: 5, icon: '📺', name: 'Bahasa Inggris' },
-    { id: 6, icon: '⚡', name: 'Fisika' },
-    { id: 7, icon: '🧬', name: 'Kimia' },
-    { id: 8, icon: '🦠', name: 'Biologi' },
+    { id: 'matematika', name: 'Matematika', icon: '📐' },
+    { id: 'ipa', name: 'IPA', icon: '🧪' },
+    { id: 'ips', name: 'IPS', icon: '🌍' },
+    { id: 'bahasa-indonesia', name: 'Bahasa Indonesia', icon: '📖' },
+    { id: 'bahasa-inggris', name: 'Bahasa Inggris', icon: '🇬🇧' },
+    { id: 'fisika', name: 'Fisika', icon: '⚡' },
+    { id: 'kimia', name: 'Kimia', icon: '🧬' },
+    { id: 'biologi', name: 'Biologi', icon: '🌿' },
   ]
 
-  const classes = [
-    { id: 7, name: 'Kelas 7' },
-    { id: 8, name: 'Kelas 8' },
-    { id: 9, name: 'Kelas 9' },
-  ]
+  const classes = ['Kelas 7', 'Kelas 8', 'Kelas 9']
 
-  const handleSend = () => {
-    if (inputText.trim() === '') return
+  const getCurrentTime = () => {
+    const now = new Date()
+    return `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`
+  }
 
+  const applyContext = () => {
+    if (!selectedSubject && !selectedClass && !topicInput) return
+    
+    let contextMsg = '✓ Konteks diterapkan: '
+    const parts = []
+    if (selectedSubject) parts.push(subjects.find(s => s.id === selectedSubject)?.name)
+    if (selectedClass) parts.push(selectedClass)
+    if (topicInput) parts.push(`"${topicInput}"`)
+    contextMsg += parts.join(', ')
+    
+    const newMessage = {
+      id: messages.length + 1,
+      type: 'bot',
+      text: contextMsg,
+      time: getCurrentTime()
+    }
+    
+    setMessages(prev => [...prev, newMessage])
+    setTopicOpen(false)
+  }
+
+  const send = () => {
+    if (!input.trim()) return
+    
     const userMessage = {
       id: messages.length + 1,
       type: 'user',
-      text: inputText,
-      time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
+      text: input,
+      time: getCurrentTime()
     }
-    setMessages([...messages, userMessage])
-    setInputText('')
+    
+    setMessages(prev => [...prev, userMessage])
+    setInput('')
+    
+    // Simulate bot typing
     setIsTyping(true)
-
     setTimeout(() => {
+      setIsTyping(false)
       const botMessage = {
         id: messages.length + 2,
         type: 'bot',
-        text: `Silakan pilih topik di atas untuk memulai. ZiAbot siap membantumu belajar! 👍`,
-        time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
+        text: 'Terima kasih atas pertanyaannya! Saya sedang memproses jawaban terbaik untuk Anda...',
+        time: getCurrentTime()
       }
       setMessages(prev => [...prev, botMessage])
-      setIsTyping(false)
     }, 1500)
   }
 
   return (
     <div className={styles.ziabotScreen}>
-      {/* Header Info */}
+      {/* Chat Header Info */}
       <div className={styles.chatHeaderInfo}>
         <div className={styles.aiAvatar}>🤖</div>
         <div className={styles.aiInfo}>
@@ -73,14 +92,14 @@ function ZiaBotScreen() {
 
       {/* Description */}
       <div className={styles.ziabotDescription}>
-        <p>ZiAbot membantu kamu belajar step by step. Jawaban bukan untuk langsung disalin, tapi untuk dipahami.</p>
+        <p>ZiAbot membantu kamu belajar step by step. Jawaban bukan untuk langsung dikasih, tapi untuk dipahami.</p>
       </div>
 
       {/* Topic Selection */}
       <div className={styles.topicSelectionContainer}>
-        <button 
+        <button
           className={styles.topicHeader}
-          onClick={() => setIsTopicOpen(!isTopicOpen)}
+          onClick={() => setTopicOpen(!topicOpen)}
         >
           <div className={styles.topicHeaderContent}>
             <span className={styles.topicIcon}>📚</span>
@@ -89,12 +108,12 @@ function ZiaBotScreen() {
               <p>Tentukan materi yang ingin dipelajari</p>
             </div>
           </div>
-          {isTopicOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+          {topicOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
         </button>
 
-        {isTopicOpen && (
+        {topicOpen && (
           <div className={styles.topicContent}>
-            {/* Mata Pelajaran */}
+            {/* Subjects */}
             <div className={styles.topicSection}>
               <h5 className={styles.sectionTitle}>MATA PELAJARAN</h5>
               <div className={styles.subjectsGrid}>
@@ -111,23 +130,23 @@ function ZiaBotScreen() {
               </div>
             </div>
 
-            {/* Kelas */}
+            {/* Class */}
             <div className={styles.topicSection}>
               <h5 className={styles.sectionTitle}>KELAS</h5>
               <div className={styles.classGrid}>
                 {classes.map(cls => (
                   <button
-                    key={cls.id}
-                    className={`${styles.classBtn} ${selectedClass === cls.id ? styles.active : ''}`}
-                    onClick={() => setSelectedClass(cls.id)}
+                    key={cls}
+                    className={`${styles.classBtn} ${selectedClass === cls ? styles.active : ''}`}
+                    onClick={() => setSelectedClass(cls)}
                   >
-                    {cls.name}
+                    {cls}
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Topik/Materi */}
+            {/* Topic Input */}
             <div className={styles.topicSection}>
               <h5 className={styles.sectionTitle}>TOPIK / MATERI</h5>
               <div className={styles.topicInputContainer}>
@@ -135,21 +154,26 @@ function ZiaBotScreen() {
                   type="text"
                   className={styles.topicInput}
                   placeholder="Contoh: Teorema Pythagoras, Fotosintesis..."
+                  value={topicInput}
+                  onChange={(e) => setTopicInput(e.target.value)}
                 />
               </div>
-              <button className={styles.applyContextBtn}>
-                ✓ Terapkan Konteks
-              </button>
             </div>
+
+            {/* Apply Button */}
+            <button className={styles.applyContextBtn} onClick={applyContext}>
+              ✓ Terapkan Konteks
+            </button>
           </div>
         )}
       </div>
 
       {/* Chat Messages */}
       <div className={styles.chatMessages}>
-        {messages.map(message => (
+        {messages.map((message) => (
           <ChatMessage key={message.id} message={message} />
         ))}
+        
         {isTyping && (
           <div className={styles.typingContainer}>
             <div className={styles.messageAvatar}>🤖</div>
@@ -164,25 +188,22 @@ function ZiaBotScreen() {
         )}
       </div>
 
-      {/* Input Area */}
+      {/* Chat Input */}
       <div className={styles.chatInputContainer}>
         <button className={styles.attachBtn}>
-          <Plus size={20} />
+          <Paperclip size={20} />
         </button>
-        <input 
-          type="text"
+        <input
           className={styles.chatInput}
           placeholder="Tanya ZiA sesuatu..."
-          value={inputText}
-          onChange={(e) => setInputText(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && send()}
         />
-        <button className={styles.sendBtn} onClick={handleSend}>
+        <button className={styles.sendBtn} onClick={send}>
           <Send size={20} />
         </button>
       </div>
     </div>
   )
 }
-
-export default ZiaBotScreen
