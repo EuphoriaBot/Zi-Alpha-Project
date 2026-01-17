@@ -49,14 +49,6 @@ function BerandaScreen() {
       onTouchEnd={handleTouchEnd}
       onWheel={handleWheel}
     >
-      {/* Header */}
-      <div className={styles.header}>
-        <div className={styles.logo}>Zi-Alpha</div>
-        <div className={styles.coinBadge}>
-          🪙 7
-        </div>
-      </div>
-
       {/* Main Content Area - Full Screen */}
       <div className={styles.contentArea}>
         {/* Video/Content Background */}
@@ -64,11 +56,6 @@ function BerandaScreen() {
           <div className={styles.videoPlaceholder}>
             <div className={styles.videoIcon}>▶</div>
           </div>
-        </div>
-
-        {/* Category Badge - Top Left */}
-        <div className={styles.categoryBadge}>
-          {currentContent.category}
         </div>
 
         {/* Content Info - Bottom Left */}

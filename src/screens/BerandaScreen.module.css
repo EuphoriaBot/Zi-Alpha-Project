@@ -6,40 +6,6 @@
   overflow: hidden;
 }
 
-/* Header */
-.header {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 20px;
-  z-index: 100;
-  background: linear-gradient(180deg, rgba(0,0,0,0.5) 0%, transparent 100%);
-}
-
-.logo {
-  font-size: 18px;
-  font-weight: bold;
-  color: #fff;
-  letter-spacing: 0.5px;
-}
-
-.coinBadge {
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 14px;
-  color: #fff;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
 /* Main Content Area */
 .contentArea {
   position: relative;
@@ -88,23 +54,6 @@
 .videoIcon:hover {
   background: rgba(255, 255, 255, 0.25);
   transform: scale(1.1);
-}
-
-/* Category Badge - Top Left */
-.categoryBadge {
-  position: absolute;
-  top: 70px;
-  left: 20px;
-  background: rgba(91, 95, 227, 0.95);
-  backdrop-filter: blur(10px);
-  color: #fff;
-  padding: 6px 16px;
-  border-radius: 20px;
-  font-size: 11px;
-  font-weight: bold;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  z-index: 10;
 }
 
 /* Content Info - Bottom Left */
