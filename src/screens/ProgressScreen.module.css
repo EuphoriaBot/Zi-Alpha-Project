@@ -1,0 +1,128 @@
+.container {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #0b0f2a, #11163c);
+  color: #fff;
+  padding: 20px;
+  font-family: system-ui, sans-serif;
+}
+
+.title {
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+
+.levelCard {
+  background: linear-gradient(180deg, #1b1f4d, #141845);
+  border-radius: 16px;
+  padding: 16px;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.levelCircle {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  border: 6px solid #7b5cff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 0 auto 12px;
+}
+
+.levelText {
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+.levelNumber {
+  font-size: 28px;
+}
+
+.xpText {
+  font-size: 16px;
+  margin: 4px 0;
+}
+
+.subText {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.statsRow {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 14px;
+}
+
+.statItem strong {
+  display: block;
+  font-size: 16px;
+}
+
+.statItem span {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.actionCardPrimary {
+  background: linear-gradient(90deg, #7b5cff, #5f3dff);
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 10px;
+}
+
+.actionCardSecondary {
+  background: linear-gradient(90deg, #3aa9ff, #2f6bff);
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 16px;
+}
+
+.actionCardPrimary span,
+.actionCardSecondary span {
+  display: block;
+  font-weight: bold;
+}
+
+.sectionTitle {
+  margin: 16px 0 10px;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.subject {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+.progressBar {
+  width: 100%;
+  height: 8px;
+  background: #2a2f5a;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #7b5cff, #4fd1ff);
+}
+
+.achievements {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.badge {
+  flex: 1;
+  background: #1b1f4d;
+  border-radius: 12px;
+  padding: 10px;
+  text-align: center;
+  font-size: 12px;
+}

@@ -1,15 +1,19 @@
 import { useState, useRef } from 'react'
-import { contentData } from '../utility/constants'
+import { contentData } from '../utility/contentData'
 import styles from './BerandaScreen.module.css'
 
 function BerandaScreen() {
   const [currentIndex, setCurrentIndex] = useState(0)
+
   const touchStartY = useRef(0)
   const touchEndY = useRef(0)
 
+  const totalContent = contentData?.length || 0
   const currentContent = contentData[currentIndex]
 
-  // Handle touch/swipe
+  /* =======================
+     TOUCH / SWIPE HANDLER
+  ======================== */
   const handleTouchStart = (e) => {
     touchStartY.current = e.touches[0].clientY
   }
@@ -20,62 +24,90 @@ function BerandaScreen() {
 
   const handleTouchEnd = () => {
     const swipeDistance = touchStartY.current - touchEndY.current
-    
-    // Swipe up (next content)
-    if (swipeDistance > 50 && currentIndex < contentData.length - 1) {
-      setCurrentIndex(currentIndex + 1)
+
+    if (swipeDistance > 50 && currentIndex < totalContent - 1) {
+      setCurrentIndex((prev) => prev + 1)
     }
-    // Swipe down (previous content)
-    else if (swipeDistance < -50 && currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1)
+
+    if (swipeDistance < -50 && currentIndex > 0) {
+      setCurrentIndex((prev) => prev - 1)
     }
   }
 
-  // Handle wheel scroll for desktop
+  /* =======================
+     DESKTOP SCROLL
+  ======================== */
   const handleWheel = (e) => {
     e.preventDefault()
-    if (e.deltaY > 0 && currentIndex < contentData.length - 1) {
-      setCurrentIndex(currentIndex + 1)
-    } else if (e.deltaY < 0 && currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1)
+
+    if (e.deltaY > 0 && currentIndex < totalContent - 1) {
+      setCurrentIndex((prev) => prev + 1)
     }
+
+    if (e.deltaY < 0 && currentIndex > 0) {
+      setCurrentIndex((prev) => prev - 1)
+    }
+  }
+
+  /* =======================
+     EMPTY STATE (ANTI CRASH)
+  ======================== */
+  if (!totalContent) {
+    return (
+      <div className={styles.berandaScreen}>
+        <div className={styles.contentArea}>
+          <div className={styles.videoBackground} />
+          <div className={styles.contentInfo}>
+            <h2 className={styles.videoTitle}>Belum ada konten</h2>
+            <p className={styles.videoMeta}>Tambahkan contentData dulu</p>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
-    <div 
+    <div
       className={styles.berandaScreen}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
       onWheel={handleWheel}
     >
-      {/* Main Content Area - Full Screen */}
       <div className={styles.contentArea}>
-        {/* Video/Content Background */}
+        {/* ===== Background / Video ===== */}
         <div className={styles.videoBackground}>
           <div className={styles.videoPlaceholder}>
             <div className={styles.videoIcon}>▶</div>
           </div>
         </div>
 
-        {/* Content Info - Bottom Left */}
-        <div className={styles.contentInfo}>
-          <h2 className={styles.videoTitle}>{currentContent.title}</h2>
-          <p className={styles.videoMeta}>
-            {currentContent.author} • {currentContent.level} • {currentContent.duration}
-          </p>
-        </div>
+        {/* ===== Content Info ===== */}
+        {currentContent && (
+          <div className={styles.contentInfo}>
+            <h2 className={styles.videoTitle}>
+              {currentContent.title}
+            </h2>
+            <p className={styles.videoMeta}>
+              {currentContent.author} • {currentContent.level} • {currentContent.duration}
+            </p>
+          </div>
+        )}
 
-        {/* Action Buttons - Right Side */}
+        {/* ===== Action Buttons ===== */}
         <div className={styles.actionButtons}>
           <button className={styles.actionBtn}>
             <div className={styles.actionIcon}>❤️</div>
-            <span className={styles.actionLabel}>1.2K</span>
+            <span className={styles.actionLabel}>
+              {currentContent?.stats?.likes ?? 0}
+            </span>
           </button>
 
           <button className={styles.actionBtn}>
             <div className={styles.actionIcon}>💬</div>
-            <span className={styles.actionLabel}>234</span>
+            <span className={styles.actionLabel}>
+              {currentContent?.stats?.comments ?? 0}
+            </span>
           </button>
 
           <button className={styles.actionBtn}>
@@ -94,12 +126,14 @@ function BerandaScreen() {
           </button>
         </div>
 
-        {/* Progress Indicator - Right Middle */}
+        {/* ===== Progress Indicator ===== */}
         <div className={styles.progressIndicator}>
           {contentData.map((_, index) => (
-            <div 
+            <div
               key={index}
-              className={`${styles.progressDot} ${index === currentIndex ? styles.active : ''}`}
+              className={`${styles.progressDot} ${
+                index === currentIndex ? styles.active : ''
+              }`}
             />
           ))}
         </div>
