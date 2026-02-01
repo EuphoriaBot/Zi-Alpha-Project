@@ -1,5 +1,13 @@
 import styles from "./ProgressScreen.module.css"
-import { Flame, Target, Star, Sword, Brain, Gamepad2 } from "lucide-react"
+import {
+  Flame,
+  Target,
+  Star,
+  Sword,
+  Brain,
+  Gamepad2,
+  Dice6
+} from "lucide-react"
 
 export default function ProgressScreen() {
   return (
@@ -63,6 +71,15 @@ export default function ProgressScreen() {
         <div>
           <h4>Fun Games</h4>
           <p>Memory, Logic, Pattern & Math</p>
+        </div>
+      </div>
+
+      {/* NEW GAME MODE */}
+      <div className={`${styles.actionCard} ${styles.board}`}>
+        <Dice6 size={22} />
+        <div>
+          <h4>Edu Board Quest</h4>
+          <p>Gamifikasi ala Ular Tangga (Math & Physics)</p>
         </div>
       </div>
 

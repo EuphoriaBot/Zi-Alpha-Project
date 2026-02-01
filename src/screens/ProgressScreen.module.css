@@ -114,6 +114,11 @@
   background: linear-gradient(135deg, #ff9a44, #fc6076);
 }
 
+/* NEW BOARD GAME STYLE */
+.board {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+}
+
 /* ACHIEVEMENTS */
 .subTitle {
   margin: 18px 0 10px;
