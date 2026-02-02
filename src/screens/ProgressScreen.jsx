@@ -3,13 +3,13 @@ import {
   Flame,
   Target,
   Star,
-  Sword,
+  Swords,
   Brain,
   Gamepad2,
   Dice6
 } from "lucide-react"
 
-export default function ProgressScreen() {
+export default function ProgressScreen({ setActiveTab }) {
   return (
     <div className={styles.container}>
       <h2 className={styles.title}>Progress</h2>
@@ -21,7 +21,6 @@ export default function ProgressScreen() {
         <div className={styles.levelInfo}>
           <h3>2,450 XP</h3>
           <p>50 XP lagi ke Level 13</p>
-
           <div className={styles.progressBar}>
             <div className={styles.progressFill} />
           </div>
@@ -35,13 +34,11 @@ export default function ProgressScreen() {
           <strong>7</strong>
           <span>Streak</span>
         </div>
-
         <div className={styles.statBox}>
           <Target size={18} />
           <strong>185</strong>
           <span>Missions</span>
         </div>
-
         <div className={styles.statBox}>
           <Star size={18} />
           <strong>450</strong>
@@ -51,7 +48,7 @@ export default function ProgressScreen() {
 
       {/* ACTION CARDS */}
       <div className={`${styles.actionCard} ${styles.boss}`}>
-        <Sword size={22} />
+        <Swords />
         <div>
           <h4>Boss Battle</h4>
           <p>Latihan Concept Boss sekarang</p>
@@ -59,7 +56,7 @@ export default function ProgressScreen() {
       </div>
 
       <div className={`${styles.actionCard} ${styles.arena}`}>
-        <Brain size={22} />
+        <Brain />
         <div>
           <h4>Knowledge Arena</h4>
           <p>Turbo Racing & Tug-of-War</p>
@@ -67,16 +64,19 @@ export default function ProgressScreen() {
       </div>
 
       <div className={`${styles.actionCard} ${styles.games}`}>
-        <Gamepad2 size={22} />
+        <Gamepad2 />
         <div>
           <h4>Fun Games</h4>
           <p>Memory, Logic, Pattern & Math</p>
         </div>
       </div>
 
-      {/* NEW GAME MODE */}
-      <div className={`${styles.actionCard} ${styles.board}`}>
-        <Dice6 size={22} />
+      {/* EDU BOARD QUEST */}
+      <div
+        className={`${styles.actionCard} ${styles.board}`}
+        onClick={() => setActiveTab("board")}
+      >
+        <Dice6 />
         <div>
           <h4>Edu Board Quest</h4>
           <p>Gamifikasi ala Ular Tangga (Math & Physics)</p>

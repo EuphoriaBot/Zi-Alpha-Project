@@ -1,0 +1,14 @@
+.tile {
+  background: #1b1c33;
+  border-radius: 10px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.player {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  font-weight: bold;
+}

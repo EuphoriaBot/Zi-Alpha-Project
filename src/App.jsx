@@ -1,11 +1,13 @@
 import { useState } from "react"
 import Header from "./components/Header"
 import BottomNav from "./components/BottomNav"
+
 import BerandaScreen from "./screens/BerandaScreen"
 import ZiaBotScreen from "./screens/ZiaBotScreen"
 import DiskusiScreen from "./screens/DiskusiScreen"
 import ProgressScreen from "./screens/ProgressScreen"
 import ProfileScreen from "./screens/ProfileScreen"
+import BoardGameScreen from "./screens/BoardGameScreen"
 
 import "./App.css"
 
@@ -21,7 +23,9 @@ function App() {
       case "diskusi":
         return <DiskusiScreen />
       case "progress":
-        return <ProgressScreen />
+        return <ProgressScreen setActiveTab={setActiveTab} />
+      case "board":
+        return <BoardGameScreen />
       case "profile":
         return <ProfileScreen />
       default:
