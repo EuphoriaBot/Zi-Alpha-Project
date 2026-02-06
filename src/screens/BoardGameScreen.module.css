@@ -1,24 +1,85 @@
 .container {
   padding: 16px;
-  min-height: 100%;
-  background: linear-gradient(180deg, #0f1020, #15162e);
-  color: white;
 }
 
 .title {
-  text-align: center;
-  margin-bottom: 14px;
+  color: white;
+  margin-bottom: 12px;
+}
+
+.boardWrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
 }
 
 .board {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  background: #0e1024;
+  padding: 14px;
+  border-radius: 20px;
+}
+
+.tile {
+  aspect-ratio: 1/1;
+  background: #1a1d3a;
+  color: white;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  position: relative;
+}
+
+.player {
+  background: #4caf50;
+  font-weight: bold;
+}
+
+.snake::after {
+  content: "🐍";
+  position: absolute;
+  bottom: 4px;
+  right: 6px;
+  font-size: 14px;
+}
+
+.ladder::after {
+  content: "🪜";
+  position: absolute;
+  bottom: 4px;
+  right: 6px;
+  font-size: 14px;
+}
+
+.choiceBox {
+  background: #ffffff;
+  padding: 12px;
+  border-radius: 16px;
+  margin-bottom: 12px;
+}
+
+.choices {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 8px;
-  margin-bottom: 20px;
+  margin-top: 8px;
+}
+
+.choices button {
+  padding: 8px;
+  border-radius: 10px;
+  border: none;
+  background: #ececff;
+  cursor: pointer;
 }
 
 .info {
+  color: white;
   margin-top: 10px;
-  text-align: center;
-  font-size: 13px;
+  display: flex;
+  justify-content: space-between;
 }
