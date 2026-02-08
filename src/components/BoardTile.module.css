@@ -1,14 +1,39 @@
 .tile {
-  background: #1b1c33;
-  border-radius: 10px;
-  height: 52px;
+  aspect-ratio: 1 / 1;
+  background: linear-gradient(145deg, #15193d, #0e1130);
+  border-radius: 14px;
+  color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 14px;
+  position: relative;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 4px 10px rgba(0, 0, 0, 0.4);
 }
 
 .player {
   background: linear-gradient(135deg, #22c55e, #16a34a);
+  box-shadow:
+    0 0 0 2px rgba(34, 197, 94, 0.7),
+    0 6px 14px rgba(34, 197, 94, 0.6);
   font-weight: bold;
+}
+
+/* SNAKE & LADDER ICON */
+.snake::after {
+  content: "🐍";
+  position: absolute;
+  bottom: 4px;
+  right: 6px;
+  font-size: 14px;
+}
+
+.ladder::after {
+  content: "🪜";
+  position: absolute;
+  bottom: 4px;
+  right: 6px;
+  font-size: 14px;
 }
