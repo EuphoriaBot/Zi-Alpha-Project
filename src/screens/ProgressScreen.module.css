@@ -1,60 +1,81 @@
 .container {
   padding: 16px;
   min-height: 100vh;
-  background: linear-gradient(180deg, #0f1020, #15162e);
+  background: linear-gradient(180deg, #0b0d1c, #12142a);
   color: white;
 }
 
 .title {
   font-size: 20px;
-  margin-bottom: 16px;
-}
-
-.levelCard {
-  display: flex;
-  gap: 14px;
-  background: #1e1e2e;
-  padding: 14px;
-  border-radius: 14px;
   margin-bottom: 14px;
 }
 
-.levelCircle {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: #7c7cff;
+/* LEVEL CARD */
+.levelCard {
+  display: flex;
+  gap: 14px;
+  background: #17182c;
+  padding: 14px;
+  border-radius: 16px;
+  margin-bottom: 14px;
+}
+
+.levelRing {
+  position: relative;
+  width: 60px;
+  height: 60px;
+}
+
+.levelRing svg {
+  transform: rotate(-90deg);
+}
+
+.levelRing circle {
+  fill: none;
+  stroke: #2a2c44;
+  stroke-width: 6;
+}
+
+.progressCircle {
+  stroke: #8b5cf6;
+  stroke-dasharray: 163;
+  stroke-dashoffset: 32;
+  filter: drop-shadow(0 0 6px #8b5cf6);
+}
+
+.levelRing span {
+  position: absolute;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
 }
 
-.levelInfo h3 {
-  margin: 0;
+.levelInfo strong {
   font-size: 16px;
 }
 
 .levelInfo p {
-  margin: 4px 0;
   font-size: 12px;
   color: #aaa;
+  margin: 4px 0;
 }
 
 .progressBar {
-  width: 100%;
   height: 6px;
-  background: #333;
+  background: #2a2c44;
   border-radius: 10px;
 }
 
 .progressFill {
   width: 80%;
   height: 100%;
-  background: linear-gradient(90deg, #7c7cff, #9f7cff);
+  background: linear-gradient(90deg, #8b5cf6, #a78bfa);
   border-radius: 10px;
 }
 
+/* STATS */
 .stats {
   display: flex;
   gap: 8px;
@@ -62,9 +83,9 @@
 }
 
 .statBox {
-  background: #1e1e2e;
   flex: 1;
-  border-radius: 12px;
+  background: #17182c;
+  border-radius: 14px;
   padding: 10px;
   text-align: center;
   font-size: 12px;
@@ -75,42 +96,45 @@
   font-size: 16px;
 }
 
+/* ACTION CARDS */
 .actionCard {
   display: flex;
+  align-items: center;
   gap: 12px;
   padding: 14px;
-  border-radius: 14px;
+  border-radius: 16px;
   margin-bottom: 10px;
-  cursor: pointer;
 }
 
-.actionCard h4 {
+.iconBox {
+  background: rgba(255,255,255,0.18);
+  padding: 8px;
+  border-radius: 10px;
+}
+
+.text h4 {
   margin: 0;
 }
 
-.actionCard p {
-  margin: 4px 0 0;
+.text p {
   font-size: 12px;
+  opacity: 0.85;
 }
 
-.boss {
-  background: linear-gradient(135deg, #6a5cff, #9f7cff);
+.actionCard svg:last-child {
+  margin-left: auto;
+  opacity: 0.7;
 }
 
-.arena {
-  background: linear-gradient(135deg, #4facfe, #00f2fe);
-}
+/* CARD COLORS */
+.boss { background: linear-gradient(135deg, #7c6cff, #9f8cff); }
+.arena { background: linear-gradient(135deg, #4facfe, #00cfff); }
+.games { background: linear-gradient(135deg, #ff9a44, #fc6076); }
+.board { background: linear-gradient(135deg, #22c55e, #16a34a); }
 
-.games {
-  background: linear-gradient(135deg, #ff9a44, #fc6076);
-}
-
-.board {
-  background: linear-gradient(135deg, #22c55e, #16a34a);
-}
-
+/* ACHIEVEMENTS */
 .subTitle {
-  margin: 16px 0 8px;
+  margin: 18px 0 8px;
 }
 
 .achievements {
@@ -120,9 +144,16 @@
 }
 
 .badge {
-  background: #1e1e2e;
-  padding: 14px;
+  background: #141528;
+  border: 1.5px solid #facc15;
+  border-radius: 14px;
+  padding: 12px;
   text-align: center;
-  border-radius: 12px;
-  font-size: 20px;
+  font-size: 12px;
+}
+
+.badge span {
+  font-size: 22px;
+  display: block;
+  margin-bottom: 4px;
 }

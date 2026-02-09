@@ -6,7 +6,8 @@ import {
   Swords,
   Brain,
   Gamepad2,
-  Dice6
+  Dice6,
+  ChevronRight
 } from "lucide-react"
 
 export default function ProgressScreen({ setActiveTab }) {
@@ -16,10 +17,16 @@ export default function ProgressScreen({ setActiveTab }) {
 
       {/* LEVEL CARD */}
       <div className={styles.levelCard}>
-        <div className={styles.levelCircle}>12</div>
+        <div className={styles.levelRing}>
+          <svg width="60" height="60">
+            <circle cx="30" cy="30" r="26" />
+            <circle cx="30" cy="30" r="26" className={styles.progressCircle} />
+          </svg>
+          <span>12</span>
+        </div>
 
         <div className={styles.levelInfo}>
-          <h3>2,450 XP</h3>
+          <strong>2,450 XP</strong>
           <p>50 XP lagi ke Level 13</p>
           <div className={styles.progressBar}>
             <div className={styles.progressFill} />
@@ -29,68 +36,84 @@ export default function ProgressScreen({ setActiveTab }) {
 
       {/* STATS */}
       <div className={styles.stats}>
-        <div className={styles.statBox}>
-          <Flame size={18} />
-          <strong>7</strong>
-          <span>Streak</span>
-        </div>
-        <div className={styles.statBox}>
-          <Target size={18} />
-          <strong>185</strong>
-          <span>Missions</span>
-        </div>
-        <div className={styles.statBox}>
-          <Star size={18} />
-          <strong>450</strong>
-          <span>XP Earned</span>
-        </div>
+        <Stat icon={<Flame />} value="7" label="Streak" />
+        <Stat icon={<Target />} value="185" label="Missions" />
+        <Stat icon={<Star />} value="450" label="XP" />
       </div>
 
       {/* ACTION CARDS */}
-      <div className={`${styles.actionCard} ${styles.boss}`}>
-        <Swords />
-        <div>
-          <h4>Boss Battle</h4>
-          <p>Latihan Concept Boss sekarang</p>
-        </div>
-      </div>
+      <ActionCard
+        icon={<Swords />}
+        title="Boss Battle"
+        desc="Latihan Concept Boss sekarang"
+        variant="boss"
+      />
 
-      <div className={`${styles.actionCard} ${styles.arena}`}>
-        <Brain />
-        <div>
-          <h4>Knowledge Arena</h4>
-          <p>Turbo Racing & Tug-of-War</p>
-        </div>
-      </div>
+      <ActionCard
+        icon={<Brain />}
+        title="Knowledge Arena"
+        desc="Turbo Racing & Tug-of-War"
+        variant="arena"
+      />
 
-      <div className={`${styles.actionCard} ${styles.games}`}>
-        <Gamepad2 />
-        <div>
-          <h4>Fun Games</h4>
-          <p>Memory, Logic, Pattern & Math</p>
-        </div>
-      </div>
+      <ActionCard
+        icon={<Gamepad2 />}
+        title="Fun Games"
+        desc="Memory, Logic, Pattern & Math"
+        variant="games"
+      />
 
-      {/* EDU BOARD QUEST */}
-      <div
-        className={`${styles.actionCard} ${styles.board}`}
+      <ActionCard
+        icon={<Dice6 />}
+        title="Edu Board Quest"
+        desc="Gamifikasi ala Ular Tangga"
+        variant="board"
         onClick={() => setActiveTab("board")}
-      >
-        <Dice6 />
-        <div>
-          <h4>Edu Board Quest</h4>
-          <p>Gamifikasi ala Ular Tangga (Math & Physics)</p>
-        </div>
-      </div>
+      />
 
       {/* ACHIEVEMENTS */}
       <h3 className={styles.subTitle}>Achievements</h3>
       <div className={styles.achievements}>
-        <div className={styles.badge}>🚀</div>
-        <div className={styles.badge}>🏆</div>
-        <div className={styles.badge}>🔥</div>
-        <div className={styles.badge}>📘</div>
+        <Achievement icon="🚀" label="Fast Start" />
+        <Achievement icon="🏆" label="Champion" />
+        <Achievement icon="🔥" label="On Fire" />
+        <Achievement icon="📘" label="Scholar" />
       </div>
+    </div>
+  )
+}
+
+function Stat({ icon, value, label }) {
+  return (
+    <div className={styles.statBox}>
+      {icon}
+      <strong>{value}</strong>
+      <span>{label}</span>
+    </div>
+  )
+}
+
+function ActionCard({ icon, title, desc, variant, onClick }) {
+  return (
+    <div
+      className={`${styles.actionCard} ${styles[variant]}`}
+      onClick={onClick}
+    >
+      <div className={styles.iconBox}>{icon}</div>
+      <div className={styles.text}>
+        <h4>{title}</h4>
+        <p>{desc}</p>
+      </div>
+      <ChevronRight />
+    </div>
+  )
+}
+
+function Achievement({ icon, label }) {
+  return (
+    <div className={styles.badge}>
+      <span>{icon}</span>
+      <p>{label}</p>
     </div>
   )
 }
