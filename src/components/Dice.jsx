@@ -1,16 +1,24 @@
+import { useState } from "react"
 import styles from "./Dice.module.css"
 
-export default function Dice({ onRoll, disabled }) {
+export default function Dice({ onRoll }) {
+  const [rolling, setRolling] = useState(false)
+
   const roll = () => {
-    const value = Math.floor(Math.random() * 6) + 1
-    onRoll(value)
+    if (rolling) return
+    setRolling(true)
+
+    setTimeout(() => {
+      const value = Math.floor(Math.random() * 6) + 1
+      onRoll(value)
+      setRolling(false)
+    }, 600)
   }
 
   return (
     <button
-      className={styles.dice}
+      className={`${styles.dice} ${rolling ? styles.roll : ""}`}
       onClick={roll}
-      disabled={disabled}
     >
       🎲 Roll Dice
     </button>

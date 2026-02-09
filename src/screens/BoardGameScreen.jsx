@@ -2,6 +2,7 @@ import { useState } from "react"
 import styles from "./BoardGameScreen.module.css"
 import BoardTile from "../components/BoardTile"
 import Dice from "../components/Dice"
+import BoardOverlay from "../components/BoardOverlay"
 import QuestionModal from "../components/QuestionModal"
 import questions from "../data/Questions"
 
@@ -21,7 +22,6 @@ export default function BoardGameScreen() {
 
   const handleAnswer = (selected) => {
     const q = questions[diceValue]
-
     let newScore = score
     let newPos = Math.min(position + diceValue, 25)
 
@@ -44,19 +44,22 @@ export default function BoardGameScreen() {
       <h2 className={styles.title}>Edu Board Quest</h2>
 
       <div className={styles.boardWrapper}>
-        <div className={styles.board}>
-          {[...Array(25)].map((_, i) => {
-            const tile = i + 1
-            return (
-              <BoardTile
-                key={tile}
-                number={tile}
-                isPlayer={tile === position}
-                isSnake={snakes[tile]}
-                isLadder={ladders[tile]}
-              />
-            )
-          })}
+        <div className={styles.boardContainer}>
+          <BoardOverlay />
+          <div className={styles.board}>
+            {[...Array(25)].map((_, i) => {
+              const tile = i + 1
+              return (
+                <BoardTile
+                  key={tile}
+                  number={tile}
+                  isPlayer={tile === position}
+                  isSnake={snakes[tile]}
+                  isLadder={ladders[tile]}
+                />
+              )
+            })}
+          </div>
         </div>
       </div>
 

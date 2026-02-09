@@ -1,20 +1,16 @@
 .overlay {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
+  z-index: 2;
 }
 
-.overlay line {
+line {
   stroke: #22c55e;
-  stroke-width: 2;
-  stroke-linecap: round;
+  stroke-width: 2.5;
 }
 
-.overlay path {
+path {
   stroke: #ef4444;
-  stroke-width: 2;
+  stroke-width: 2.5;
   fill: none;
-  stroke-linecap: round;
 }

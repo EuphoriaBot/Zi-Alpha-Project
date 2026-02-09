@@ -1,48 +1,37 @@
 .container {
   min-height: 100%;
   padding: 20px 16px 32px;
-  background: radial-gradient(
-    circle at top,
-    #1b1f4a,
-    #0f122e 60%,
-    #0a0d22
-  );
+  background: radial-gradient(circle at top, #1b1f4a, #0f122e 60%, #0a0d22);
   color: white;
 }
 
-/* TITLE */
 .title {
   text-align: center;
   font-size: 20px;
   margin-bottom: 16px;
 }
 
-/* BOARD FRAME */
 .boardWrapper {
   background: linear-gradient(180deg, #0b0f2e, #07091a);
   padding: 16px;
-  border-radius: 20px;
-  box-shadow:
-    0 10px 30px rgba(0, 0, 0, 0.5),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
-  margin-bottom: 20px;
+  border-radius: 22px;
+  margin-bottom: 18px;
 }
 
-/* BOARD GRID */
+.boardContainer {
+  position: relative;
+}
+
 .board {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 10px;
+  position: relative;
+  z-index: 3;
 }
 
-/* DICE AREA */
-.diceArea {
-  margin-top: 12px;
-}
-
-/* INFO */
 .info {
-  margin-top: 10px;
+  margin-top: 12px;
   display: flex;
   justify-content: space-between;
   font-size: 13px;
