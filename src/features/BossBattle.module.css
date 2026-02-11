@@ -1,0 +1,35 @@
+.container {
+  padding: 20px;
+  color: white;
+}
+
+.title {
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.hpBarContainer {
+  margin: 20px 0;
+}
+
+.hpBar {
+  width: 100%;
+  height: 12px;
+  background: #1e223f;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.hpFillBoss {
+  height: 100%;
+  background: linear-gradient(90deg, #ff4d4d, #ff0000);
+  transition: 0.3s ease;
+}
+
+.hpFillPlayer {
+  height: 100%;
+  background: linear-gradient(90deg, #4d79ff, #0044ff);
+  transition: 0.3s ease;
+}
