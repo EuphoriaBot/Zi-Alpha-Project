@@ -1,33 +1,46 @@
-export default function BossHpBar({ shield, core }) {
+import { motion } from "framer-motion"
+
+export function BossHpBar({
+  shieldHP,
+  shieldMaxHP,
+  coreHP,
+  coreMaxHP,
+  bossName
+}) {
+
+  const shieldPercentage = Math.max(0, (shieldHP / shieldMaxHP) * 100)
+  const corePercentage = Math.max(0, (coreHP / coreMaxHP) * 100)
+
   return (
-    <div style={{ marginBottom: "15px" }}>
-      <div>
-        🛡 Shield
-        <div style={barOuter}>
-          <div style={{ ...barInner, width: `${shield}%`, background: "#00c2ff" }} />
-        </div>
+    <div className="w-full max-w-md mx-auto">
+
+      <div className="flex justify-between mb-2">
+        <h3 className="text-lg font-bold text-slate-50">{bossName}</h3>
+        <span className="text-purple-400 font-semibold">
+          {coreHP} / {coreMaxHP}
+        </span>
       </div>
 
-      <div>
-        ❤️ Core
-        <div style={barOuter}>
-          <div style={{ ...barInner, width: `${core}%`, background: "#ff4d4d" }} />
+      {shieldHP > 0 && (
+        <div className="mb-2">
+          <div className="h-3 bg-slate-800 rounded-full overflow-hidden">
+            <motion.div
+              className="h-full bg-gradient-to-r from-cyan-500 to-blue-500"
+              animate={{ width: `${shieldPercentage}%` }}
+            />
+          </div>
         </div>
+      )}
+
+      <div className="h-6 bg-slate-800 rounded-full overflow-hidden">
+        <motion.div
+          className="h-full bg-gradient-to-r from-purple-600 to-indigo-500"
+          animate={{ width: `${corePercentage}%` }}
+        />
       </div>
+
     </div>
   )
 }
 
-const barOuter = {
-  width: "300px",
-  height: "18px",
-  background: "#333",
-  margin: "5px auto",
-  borderRadius: "10px",
-  overflow: "hidden"
-}
-
-const barInner = {
-  height: "100%",
-  transition: "0.3s"
-}
+export default BossHpBar

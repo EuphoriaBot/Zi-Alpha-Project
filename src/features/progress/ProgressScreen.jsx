@@ -47,6 +47,7 @@ export default function ProgressScreen({ setActiveTab }) {
         title="Boss Battle"
         desc="Latihan Concept Boss sekarang"
         variant="boss"
+        onClick={() => setActiveTab("bossBattle")}
       />
 
       <ActionCard

@@ -7,6 +7,7 @@ import DiskusiScreen from "./features/discussion/DiskusiScreen"
 import ProgressScreen from "./features/progress/ProgressScreen"
 import ProfileScreen from "./features/profile/ProfileScreen"
 import BoardGameScreen from "./features/boardGame/BoardGameScreen"
+import ActiveBattlePage from "./features/bossBattle/pages/ActiveBattlePage"
 
 import "./App.css"
 
@@ -16,7 +17,7 @@ function App() {
   const renderScreen = () => {
     switch (activeTab) {
       case "beranda":
-        return <BerandaScreen />
+        return <BerandaScreen setActiveTab={setActiveTab} />
       case "ziabot":
         return <ZiaBotScreen />
       case "diskusi":
@@ -27,15 +28,19 @@ function App() {
         return <BoardGameScreen />
       case "profile":
         return <ProfileScreen />
+      case "bossbattle":
+        return <ActiveBattlePage setActiveTab={setActiveTab} />
       default:
-        return <BerandaScreen />
+        return <BerandaScreen setActiveTab={setActiveTab} />
     }
   }
 
   return (
     <div className="app-container">
       <Header />
-      <main className="main-content">{renderScreen()}</main>
+      <main className="main-content">
+        {renderScreen()}
+      </main>
       <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} />
     </div>
   )
