@@ -1,13 +1,12 @@
 import { useState } from "react"
-import Header from "./components/Header"
-import BottomNav from "./components/BottomNav"
-
-import BerandaScreen from "./screens/BerandaScreen"
-import ZiaBotScreen from "./screens/ZiaBotScreen"
-import DiskusiScreen from "./screens/DiskusiScreen"
-import ProgressScreen from "./screens/ProgressScreen"
-import ProfileScreen from "./screens/ProfileScreen"
-import BoardGameScreen from "./screens/BoardGameScreen"
+import Header from "./shared/components/Header"
+import BottomNav from "./shared/components/BottomNav"
+import BerandaScreen from "./features/home/BerandaScreen"
+import ZiaBotScreen from "./features/ziabot/ZiaBotScreen"
+import DiskusiScreen from "./features/discussion/DiskusiScreen"
+import ProgressScreen from "./features/progress/ProgressScreen"
+import ProfileScreen from "./features/profile/ProfileScreen"
+import BoardGameScreen from "./features/boardGame/BoardGameScreen"
 
 import "./App.css"
 

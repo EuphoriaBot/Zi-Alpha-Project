@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { ChevronDown, ChevronUp, Send, Paperclip } from 'lucide-react'
-import ChatMessage from '../components/ChatMessage'
-import { initialMessages } from '../utility/constants'
+import ChatMessage from '../../shared/components/ChatMessage'
+import { initialMessages } from '../../shared/utils/constants'
 import styles from './ZiaBotScreen.module.css'
 
 export default function ZiaBotScreen() {

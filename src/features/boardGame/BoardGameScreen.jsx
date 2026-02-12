@@ -1,10 +1,10 @@
 import { useState } from "react"
 import styles from "./BoardGameScreen.module.css"
-import BoardTile from "../components/BoardTile"
-import Dice from "../components/Dice"
-import BoardOverlay from "../components/BoardOverlay"
-import QuestionModal from "../components/QuestionModal"
-import questions from "../data/Questions"
+import BoardTile from "./components/BoardTile"
+import Dice from "./components/Dice"
+import BoardOverlay from "./components/BoardOverlay"
+import QuestionModal from "./components/QuestionModal"
+import questions from "./data/Questions"
 
 export default function BoardGameScreen() {
   const [position, setPosition] = useState(1)

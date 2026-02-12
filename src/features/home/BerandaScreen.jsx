@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { contentData } from '../utility/contentData'
+import { contentData } from '../../shared/data/contentData'
 import styles from './BerandaScreen.module.css'
 
 function BerandaScreen() {
