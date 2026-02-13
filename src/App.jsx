@@ -28,7 +28,7 @@ function App() {
         return <BoardGameScreen />
       case "profile":
         return <ProfileScreen />
-      case "bossbattle":
+      case "bossBattle":
         return <ActiveBattlePage setActiveTab={setActiveTab} />
       default:
         return <BerandaScreen setActiveTab={setActiveTab} />

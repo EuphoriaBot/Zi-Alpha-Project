@@ -49,7 +49,7 @@ export default function ProgressScreen({ setActiveTab }) {
         variant="boss"
         onClick={() => setActiveTab("bossBattle")}
       />
-
+      
       <ActionCard
         icon={<Brain />}
         title="Knowledge Arena"
