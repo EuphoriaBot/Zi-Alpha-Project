@@ -1,25 +1,15 @@
-/* =========================
-   RESET
-========================= */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-/* =========================
-   ROOT & BODY
-========================= */
+/* ROOT */
 html,
 body {
   height: 100%;
+  margin: 0;
 }
 
+/* OUTSIDE PHONE BACKGROUND */
 body {
   display: flex;
   justify-content: center;
 
-  /* 🌌 BACKGROUND LUAR (AREA DI LUAR HP) */
   background: radial-gradient(
     circle at top,
     #1b1f4a,
@@ -27,35 +17,27 @@ body {
     #0a0d22
   );
 
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
-    "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
-    "Helvetica Neue", sans-serif;
-
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-/* =========================
-   ROOT CONTAINER
-========================= */
+/* ROOT CONTAINER */
 #root {
   width: 100%;
-  height: 100%;
   display: flex;
   justify-content: center;
 }
 
-/* =========================
-   APP CONTAINER (HP MOCKUP)
-========================= */
+/* PHONE CONTAINER */
 .app-container {
+
   width: 100%;
   max-width: 430px;
+
   height: 100vh;
+
   display: flex;
   flex-direction: column;
 
-  /* 💜 BACKGROUND DALAM APP */
   background: linear-gradient(
     180deg,
     #1b1f4a,
@@ -63,58 +45,53 @@ body {
   );
 
   overflow: hidden;
+
   position: relative;
 }
 
-/* =========================
-   MAIN CONTENT
-========================= */
+/* MAIN CONTENT (CRITICAL FIX) */
 .main-content {
+
   flex: 1;
+
+  min-height: 0;
+
   overflow-y: auto;
 
-  /* ❗ PENTING: JANGAN PUTIH */
+  display: flex;
+  flex-direction: column;
+
   background: transparent;
+
 }
 
-/* =========================
-   SCROLLBAR (DARK MODE)
-========================= */
+/* SCROLLBAR STYLE */
 .main-content::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
 }
 
 .main-content::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.04);
+  background: transparent;
 }
 
 .main-content::-webkit-scrollbar-thumb {
-  background: rgba(167, 139, 250, 0.45); /* ungu lembut */
-  border-radius: 6px;
+  background: rgba(167, 139, 250, 0.5);
+  border-radius: 10px;
 }
 
-.main-content::-webkit-scrollbar-thumb:hover {
-  background: rgba(167, 139, 250, 0.8);
-}
-
-/* =========================
-   RESPONSIVE & FLOAT EFFECT
-========================= */
-@media (max-width: 430px) {
-  .app-container {
-    max-width: 100%;
-    border-radius: 0;
-  }
-}
-
+/* DESKTOP PHONE EFFECT */
 @media (min-width: 431px) {
+
   .app-container {
+
     margin: 20px 0;
+
     border-radius: 26px;
 
-    /* ✨ FLOATING PHONE EFFECT */
     box-shadow:
-      0 30px 80px rgba(0, 0, 0, 0.65),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+      0 30px 80px rgba(0,0,0,0.7),
+      inset 0 0 0 1px rgba(255,255,255,0.05);
+
   }
+
 }

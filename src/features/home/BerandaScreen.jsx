@@ -1,145 +1,164 @@
-import { useState, useRef } from 'react'
-import { contentData } from '../../shared/data/contentData'
-import styles from './BerandaScreen.module.css'
+import { useState, useEffect } from "react"
+import {
+  Heart,
+  MessageCircle,
+  Bookmark,
+  Share,
+} from "lucide-react"
 
-function BerandaScreen() {
+export default function BerandaScreen() {
+
+  const videos = [
+    {
+      id: 1,
+      title: "useState vs useRef: Jangan Ketuker!",
+      author: "@Zi-Alpha",
+      level: "Beginner",
+      duration: "3:10",
+      likes: 124,
+      comments: 12,
+      saves: 8,
+    },
+    {
+      id: 2,
+      title: "Kenapa React Butuh Key?",
+      author: "@Zi-Alpha",
+      level: "Intermediate",
+      duration: "4:22",
+      likes: 98,
+      comments: 7,
+      saves: 5,
+    },
+    {
+      id: 3,
+      title: "Cara Kerja Virtual DOM",
+      author: "@Zi-Alpha",
+      level: "Advanced",
+      duration: "5:01",
+      likes: 201,
+      comments: 32,
+      saves: 19,
+    },
+  ]
+
   const [currentIndex, setCurrentIndex] = useState(0)
 
-  const touchStartY = useRef(0)
-  const touchEndY = useRef(0)
+  const currentVideo = videos[currentIndex]
 
-  const totalContent = contentData?.length || 0
-  const currentContent = contentData[currentIndex]
+  // SCROLL HANDLER (mouse wheel)
+  useEffect(() => {
 
-  /* =======================
-     TOUCH / SWIPE HANDLER
-  ======================== */
-  const handleTouchStart = (e) => {
-    touchStartY.current = e.touches[0].clientY
-  }
+    const handleScroll = (e) => {
 
-  const handleTouchMove = (e) => {
-    touchEndY.current = e.touches[0].clientY
-  }
+      if (e.deltaY > 0) {
+        // scroll down
+        setCurrentIndex(prev =>
+          prev < videos.length - 1 ? prev + 1 : prev
+        )
+      } else {
+        // scroll up
+        setCurrentIndex(prev =>
+          prev > 0 ? prev - 1 : prev
+        )
+      }
 
-  const handleTouchEnd = () => {
-    const swipeDistance = touchStartY.current - touchEndY.current
-
-    if (swipeDistance > 50 && currentIndex < totalContent - 1) {
-      setCurrentIndex((prev) => prev + 1)
     }
 
-    if (swipeDistance < -50 && currentIndex > 0) {
-      setCurrentIndex((prev) => prev - 1)
+    window.addEventListener("wheel", handleScroll)
+
+    return () =>
+      window.removeEventListener("wheel", handleScroll)
+
+  }, [])
+
+  // KEYBOARD HANDLER
+  useEffect(() => {
+
+    const handleKey = (e) => {
+
+      if (e.key === "ArrowDown") {
+        setCurrentIndex(prev =>
+          prev < videos.length - 1 ? prev + 1 : prev
+        )
+      }
+
+      if (e.key === "ArrowUp") {
+        setCurrentIndex(prev =>
+          prev > 0 ? prev - 1 : prev
+        )
+      }
+
     }
-  }
 
-  /* =======================
-     DESKTOP SCROLL
-  ======================== */
-  const handleWheel = (e) => {
-    e.preventDefault()
+    window.addEventListener("keydown", handleKey)
 
-    if (e.deltaY > 0 && currentIndex < totalContent - 1) {
-      setCurrentIndex((prev) => prev + 1)
-    }
+    return () =>
+      window.removeEventListener("keydown", handleKey)
 
-    if (e.deltaY < 0 && currentIndex > 0) {
-      setCurrentIndex((prev) => prev - 1)
-    }
-  }
-
-  /* =======================
-     EMPTY STATE (ANTI CRASH)
-  ======================== */
-  if (!totalContent) {
-    return (
-      <div className={styles.berandaScreen}>
-        <div className={styles.contentArea}>
-          <div className={styles.videoBackground} />
-          <div className={styles.contentInfo}>
-            <h2 className={styles.videoTitle}>Belum ada konten</h2>
-            <p className={styles.videoMeta}>Tambahkan contentData dulu</p>
-          </div>
-        </div>
-      </div>
-    )
-  }
+  }, [])
 
   return (
-    <div
-      className={styles.berandaScreen}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-      onWheel={handleWheel}
-    >
-      <div className={styles.contentArea}>
-        {/* ===== Background / Video ===== */}
-        <div className={styles.videoBackground}>
-          <div className={styles.videoPlaceholder}>
-            <div className={styles.videoIcon}>▶</div>
-          </div>
-        </div>
+    <div className="relative w-full h-full overflow-hidden">
 
-        {/* ===== Content Info ===== */}
-        {currentContent && (
-          <div className={styles.contentInfo}>
-            <h2 className={styles.videoTitle}>
-              {currentContent.title}
-            </h2>
-            <p className={styles.videoMeta}>
-              {currentContent.author} • {currentContent.level} • {currentContent.duration}
-            </p>
-          </div>
-        )}
+      {/* VIDEO BACKGROUND */}
+      <div className="absolute inset-0 bg-gradient-to-b from-indigo-700 via-indigo-900 to-black transition-all duration-500" />
 
-        {/* ===== Action Buttons ===== */}
-        <div className={styles.actionButtons}>
-          <button className={styles.actionBtn}>
-            <div className={styles.actionIcon}>❤️</div>
-            <span className={styles.actionLabel}>
-              {currentContent?.stats?.likes ?? 0}
+      {/* CONTENT */}
+      <div className="relative h-full flex flex-col justify-end p-6">
+
+        {/* RIGHT SIDE BUTTONS */}
+        <div className="absolute right-4 bottom-24 flex flex-col items-center gap-6">
+
+          {/* LIKE */}
+          <div className="flex flex-col items-center">
+            <Heart size={28} className="cursor-pointer hover:scale-110 transition" />
+            <span className="text-xs mt-1">
+              {currentVideo.likes}
             </span>
-          </button>
+          </div>
 
-          <button className={styles.actionBtn}>
-            <div className={styles.actionIcon}>💬</div>
-            <span className={styles.actionLabel}>
-              {currentContent?.stats?.comments ?? 0}
+          {/* COMMENT */}
+          <div className="flex flex-col items-center">
+            <MessageCircle size={28} className="cursor-pointer hover:scale-110 transition" />
+            <span className="text-xs mt-1">
+              {currentVideo.comments}
             </span>
-          </button>
+          </div>
 
-          <button className={styles.actionBtn}>
-            <div className={styles.actionIcon}>📌</div>
-            <span className={styles.actionLabel}>Save</span>
-          </button>
+          {/* SAVE */}
+          <div className="flex flex-col items-center">
+            <Bookmark size={28} className="cursor-pointer hover:scale-110 transition" />
+            <span className="text-xs mt-1">
+              {currentVideo.saves}
+            </span>
+          </div>
 
-          <button className={styles.actionBtn}>
-            <div className={styles.actionIcon}>↗️</div>
-            <span className={styles.actionLabel}>Share</span>
-          </button>
+          {/* SHARE */}
+          <div className="flex flex-col items-center">
+            <Share size={28} className="cursor-pointer hover:scale-110 transition" />
+          </div>
 
-          <button className={`${styles.actionBtn} ${styles.aiBtn}`}>
-            <div className={styles.actionIcon}>🤖</div>
-            <span className={styles.actionLabel}>ZiAbot</span>
-          </button>
         </div>
 
-        {/* ===== Progress Indicator ===== */}
-        <div className={styles.progressIndicator}>
-          {contentData.map((_, index) => (
-            <div
-              key={index}
-              className={`${styles.progressDot} ${
-                index === currentIndex ? styles.active : ''
-              }`}
-            />
-          ))}
+        {/* VIDEO INFO */}
+        <div className="max-w-[80%]">
+
+          <div className="text-sm opacity-70">
+            {currentVideo.author}
+          </div>
+
+          <div className="text-xl font-bold mt-1">
+            {currentVideo.title}
+          </div>
+
+          <div className="text-sm opacity-60 mt-1">
+            {currentVideo.level} • {currentVideo.duration}
+          </div>
+
         </div>
+
       </div>
+
     </div>
   )
 }
-
-export default BerandaScreen
