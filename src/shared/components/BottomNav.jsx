@@ -34,7 +34,7 @@ function BottomNav({ activeTab, setActiveTab }) {
             <Icon
               size={22}
               strokeWidth={2}
-              color={isActive ? "#5B5FE3" : "#9CA3AF"}
+              color={isActive ? "#6C72FF" : "#8B90C7"}
             />
 
             <span>{item.label}</span>
