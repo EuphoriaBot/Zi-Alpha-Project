@@ -107,7 +107,7 @@ export default function BerandaScreen() {
       <div className="relative h-full flex flex-col justify-end p-6">
 
         {/* RIGHT SIDE BUTTONS */}
-        <div className="absolute right-4 bottom-24 flex flex-col items-center gap-6">
+        <div className="absolute right-4 bottom-10 flex flex-col items-center gap-7">
 
           {/* LIKE */}
           <div className="flex flex-col items-center">
