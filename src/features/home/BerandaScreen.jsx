@@ -39,20 +39,33 @@ export default function BerandaScreen() {
   )
 
   const [currentIndex, setCurrentIndex] = useState(0)
-  const currentVideo = videos[currentIndex]
 
   const containerRef = useRef(null)
-  const scrollLockRef = useRef(false)
+
+  // anti loncat
+  const lockRef = useRef(false)
   const wheelAccumRef = useRef(0)
 
-  const goNext = () => {
-    setCurrentIndex((prev) => (prev < videos.length - 1 ? prev + 1 : prev))
+  // swipe state
+  const touchStartYRef = useRef(null)
+  const touchDeltaYRef = useRef(0)
+
+  const clampIndex = (idx) => Math.max(0, Math.min(videos.length - 1, idx))
+
+  const goTo = (idx) => setCurrentIndex(() => clampIndex(idx))
+  const goNext = () => setCurrentIndex((prev) => clampIndex(prev + 1))
+  const goPrev = () => setCurrentIndex((prev) => clampIndex(prev - 1))
+
+  const withLock = (fn) => {
+    if (lockRef.current) return
+    lockRef.current = true
+    fn()
+    window.setTimeout(() => {
+      lockRef.current = false
+    }, 380) // feel snap
   }
 
-  const goPrev = () => {
-    setCurrentIndex((prev) => (prev > 0 ? prev - 1 : prev))
-  }
-
+  // Wheel only inside feed + prevent page scroll
   useEffect(() => {
     const el = containerRef.current
     if (!el) return
@@ -60,96 +73,128 @@ export default function BerandaScreen() {
     const onWheel = (e) => {
       e.preventDefault()
 
-      if (scrollLockRef.current) return
-
       wheelAccumRef.current += e.deltaY
 
       const THRESHOLD = 60
       if (Math.abs(wheelAccumRef.current) < THRESHOLD) return
 
-      const dirDown = wheelAccumRef.current > 0
+      const down = wheelAccumRef.current > 0
       wheelAccumRef.current = 0
 
-      scrollLockRef.current = true
-      if (dirDown) goNext()
-      else goPrev()
-
-      window.setTimeout(() => {
-        scrollLockRef.current = false
-      }, 350)
+      withLock(() => {
+        if (down) goNext()
+        else goPrev()
+      })
     }
 
     el.addEventListener("wheel", onWheel, { passive: false })
     return () => el.removeEventListener("wheel", onWheel)
   }, [videos.length])
 
+  // Keyboard
   useEffect(() => {
-    const handleKey = (e) => {
-      if (e.key === "ArrowDown") goNext()
-      if (e.key === "ArrowUp") goPrev()
+    const onKey = (e) => {
+      if (e.key === "ArrowDown") withLock(goNext)
+      if (e.key === "ArrowUp") withLock(goPrev)
     }
-
-    window.addEventListener("keydown", handleKey)
-    return () => window.removeEventListener("keydown", handleKey)
+    window.addEventListener("keydown", onKey)
+    return () => window.removeEventListener("keydown", onKey)
   }, [videos.length])
+
+  // Touch swipe
+  const onTouchStart = (e) => {
+    if (!e.touches?.length) return
+    touchStartYRef.current = e.touches[0].clientY
+    touchDeltaYRef.current = 0
+  }
+
+  const onTouchMove = (e) => {
+    if (touchStartYRef.current == null) return
+    const y = e.touches[0].clientY
+    touchDeltaYRef.current = y - touchStartYRef.current
+
+    // prevent “pull to refresh / bounce”
+    e.preventDefault()
+  }
+
+  const onTouchEnd = () => {
+    const delta = touchDeltaYRef.current
+    touchStartYRef.current = null
+    touchDeltaYRef.current = 0
+
+    const SWIPE_THRESHOLD = 55
+    if (Math.abs(delta) < SWIPE_THRESHOLD) return
+
+    // swipe up => next (delta negatif)
+    withLock(() => {
+      if (delta < 0) goNext()
+      else goPrev()
+    })
+  }
 
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-full overflow-hidden select-none touch-none"
+      className="relative w-full h-full overflow-hidden select-none bg-black"
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+      style={{
+        // penting untuk mobile: biar gesture kita gak bentrok sama scroll browser
+        touchAction: "none",
+      }}
     >
-      {/* VIDEO BACKGROUND */}
-      <div className="absolute inset-0 bg-gradient-to-b from-indigo-700 via-indigo-900 to-black transition-all duration-500" />
+      {/* SLIDES WRAPPER (ini yang bikin TikTok-feel) */}
+      <div
+        className="absolute inset-0"
+        style={{
+          transform: `translateY(-${currentIndex * 100}%)`,
+          transition: "transform 360ms cubic-bezier(0.22, 1, 0.36, 1)",
+        }}
+      >
+        {videos.map((video) => (
+          <div key={video.id} className="relative h-full w-full">
+            {/* "Video" background (dummy) */}
+            <div className="absolute inset-0 bg-gradient-to-b from-indigo-700 via-indigo-900 to-black" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
 
-      {/* overlay biar text kebaca */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
+            {/* CONTENT per slide */}
+            <div className="relative h-full flex flex-col justify-end p-6">
+              {/* RIGHT ACTIONS */}
+              <div className="absolute right-4 bottom-10 flex flex-col items-center gap-7">
+                <div className="flex flex-col items-center">
+                  <Heart size={28} className="cursor-pointer hover:scale-110 transition" />
+                  <span className="text-xs mt-1">{video.likes}</span>
+                </div>
 
-      {/* CONTENT */}
-      <div className="relative h-full flex flex-col justify-end p-6">
-        {/* RIGHT SIDE BUTTONS */}
-        <div className="absolute right-4 bottom-10 flex flex-col items-center gap-7">
-          <div className="flex flex-col items-center">
-            <Heart
-              size={28}
-              className="cursor-pointer hover:scale-110 transition"
-            />
-            <span className="text-xs mt-1">{currentVideo.likes}</span>
+                <div className="flex flex-col items-center">
+                  <MessageCircle size={28} className="cursor-pointer hover:scale-110 transition" />
+                  <span className="text-xs mt-1">{video.comments}</span>
+                </div>
+
+                <div className="flex flex-col items-center">
+                  <Bookmark size={28} className="cursor-pointer hover:scale-110 transition" />
+                  <span className="text-xs mt-1">{video.saves}</span>
+                </div>
+
+                <div className="flex flex-col items-center">
+                  <Share size={28} className="cursor-pointer hover:scale-110 transition" />
+                </div>
+              </div>
+
+              {/* VIDEO INFO */}
+              <div className="max-w-[80%]">
+                <div className="text-sm opacity-70">{video.author}</div>
+
+                <div className="text-xl font-bold mt-1">{video.title}</div>
+
+                <div className="text-sm opacity-60 mt-1">
+                  {video.level} • {video.duration}
+                </div>
+              </div>
+            </div>
           </div>
-
-          <div className="flex flex-col items-center">
-            <MessageCircle
-              size={28}
-              className="cursor-pointer hover:scale-110 transition"
-            />
-            <span className="text-xs mt-1">{currentVideo.comments}</span>
-          </div>
-
-          <div className="flex flex-col items-center">
-            <Bookmark
-              size={28}
-              className="cursor-pointer hover:scale-110 transition"
-            />
-            <span className="text-xs mt-1">{currentVideo.saves}</span>
-          </div>
-
-          <div className="flex flex-col items-center">
-            <Share
-              size={28}
-              className="cursor-pointer hover:scale-110 transition"
-            />
-          </div>
-        </div>
-
-        {/* VIDEO INFO */}
-        <div className="max-w-[80%]">
-          <div className="text-sm opacity-70">{currentVideo.author}</div>
-
-          <div className="text-xl font-bold mt-1">{currentVideo.title}</div>
-
-          <div className="text-sm opacity-60 mt-1">
-            {currentVideo.level} • {currentVideo.duration}
-          </div>
-        </div>
+        ))}
       </div>
     </div>
   )
