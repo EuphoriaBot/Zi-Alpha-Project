@@ -1,8 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion"
 
 export function BattleLog({ logs }) {
-
-  const recentLogs = logs.slice(-2)
+  const recentLogs = logs.slice(-2) // karena sekarang log ditambah di belakang
 
   return (
     <div className="flex flex-col gap-2 items-center min-h-[50px] justify-end">

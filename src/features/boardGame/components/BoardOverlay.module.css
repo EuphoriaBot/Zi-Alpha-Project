@@ -2,14 +2,15 @@
   position: absolute;
   inset: 0;
   z-index: 2;
+  pointer-events: none;
 }
 
-line {
+.overlay line {
   stroke: #22c55e;
   stroke-width: 2.5;
 }
 
-path {
+.overlay path {
   stroke: #ef4444;
   stroke-width: 2.5;
   fill: none;

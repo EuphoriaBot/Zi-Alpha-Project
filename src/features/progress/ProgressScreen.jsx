@@ -47,9 +47,9 @@ export default function ProgressScreen({ setActiveTab }) {
         title="Boss Battle"
         desc="Latihan Concept Boss sekarang"
         variant="boss"
-        onClick={() => setActiveTab("bossBattle")}
+        onClick={() => setActiveTab?.("bossBattle")}
       />
-      
+
       <ActionCard
         icon={<Brain />}
         title="Knowledge Arena"
@@ -69,7 +69,7 @@ export default function ProgressScreen({ setActiveTab }) {
         title="Edu Board Quest"
         desc="Gamifikasi ala Ular Tangga"
         variant="board"
-        onClick={() => setActiveTab("board")}
+        onClick={() => setActiveTab?.("boardGame")}
       />
 
       {/* ACHIEVEMENTS */}
@@ -96,7 +96,8 @@ function Stat({ icon, value, label }) {
 
 function ActionCard({ icon, title, desc, variant, onClick }) {
   return (
-    <div
+    <button
+      type="button"
       className={`${styles.actionCard} ${styles[variant]}`}
       onClick={onClick}
     >
@@ -106,7 +107,7 @@ function ActionCard({ icon, title, desc, variant, onClick }) {
         <p>{desc}</p>
       </div>
       <ChevronRight />
-    </div>
+    </button>
   )
 }
 

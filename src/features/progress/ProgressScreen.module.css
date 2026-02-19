@@ -1,6 +1,6 @@
 .container {
   padding: 16px;
-  min-height: 100vh;
+  min-height: 100%;
   background: linear-gradient(180deg, #0b0d1c, #12142a);
   color: white;
 }
@@ -32,12 +32,12 @@
 
 .levelRing circle {
   fill: none;
-  stroke: #1f2140; /* track lebih gelap */
+  stroke: #1f2140;
   stroke-width: 6;
 }
 
 .progressCircle {
-  stroke: #a78bfa; /* lebih terang */
+  stroke: #a78bfa;
   stroke-dasharray: 163;
   stroke-dashoffset: 32;
   filter:
@@ -100,12 +100,16 @@
 
 /* ACTION CARDS */
 .actionCard {
+  width: 100%;
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 14px;
   border-radius: 16px;
   margin-bottom: 10px;
+  text-align: left;
+  cursor: pointer;
+  border: none;
 }
 
 .iconBox {
@@ -121,6 +125,7 @@
 .text p {
   font-size: 12px;
   opacity: 0.85;
+  margin: 4px 0 0;
 }
 
 .actionCard svg:last-child {

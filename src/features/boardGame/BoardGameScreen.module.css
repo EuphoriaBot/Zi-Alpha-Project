@@ -5,10 +5,39 @@
   color: white;
 }
 
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.backButton {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.06);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+}
+
+.backButton:hover {
+  background: rgba(255,255,255,0.10);
+}
+
+.headerSpacer {
+  width: 40px;
+  height: 40px;
+}
+
 .title {
   text-align: center;
   font-size: 20px;
-  margin-bottom: 16px;
+  margin: 0;
 }
 
 .boardWrapper {
@@ -36,4 +65,13 @@
   justify-content: space-between;
   font-size: 13px;
   opacity: 0.85;
+}
+
+.winBox {
+  margin-top: 14px;
+  padding: 14px;
+  border-radius: 14px;
+  text-align: center;
+  background: rgba(34,197,94,0.16);
+  border: 1px solid rgba(34,197,94,0.35);
 }

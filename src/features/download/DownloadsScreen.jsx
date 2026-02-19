@@ -1,5 +1,5 @@
-import { Download, Play, CheckCircle, Globe } from 'lucide-react'
-import styles from './DownloadsScreen.module.css'
+import { Download, Play, CheckCircle, Globe } from "lucide-react"
+import styles from "./DonwloadScreen.module.css"
 
 function DownloadsScreen() {
   const downloadedVideos = [
@@ -9,7 +9,8 @@ function DownloadsScreen() {
       author: "Pak Ahmad",
       subject: "Kelas 8",
       size: "45 MB",
-      thumbnail: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=300&h=200&fit=crop",
+      thumbnail:
+        "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=300&h=200&fit=crop",
       status: "ready",
       progress: 100
     },
@@ -19,7 +20,8 @@ function DownloadsScreen() {
       author: "Bu Sari",
       subject: "Kelas 7",
       size: "52 MB",
-      thumbnail: "https://images.unsplash.com/photo-1530587191325-3db32d826c18?w=300&h=200&fit=crop",
+      thumbnail:
+        "https://images.unsplash.com/photo-1530587191325-3db32d826c18?w=300&h=200&fit=crop",
       status: "ready",
       progress: 100
     },
@@ -29,15 +31,18 @@ function DownloadsScreen() {
       author: "Pak Budi",
       subject: "Kelas 9",
       size: "38 MB",
-      thumbnail: "https://images.unsplash.com/photo-1636466497217-26a8cbeaf0aa?w=300&h=200&fit=crop",
+      thumbnail:
+        "https://images.unsplash.com/photo-1636466497217-26a8cbeaf0aa?w=300&h=200&fit=crop",
       status: "downloading",
       progress: 65
     }
   ]
 
+  const readyCount = downloadedVideos.filter(v => v.status === "ready").length
+
   const totalSize = downloadedVideos
-    .filter(v => v.status === 'ready')
-    .reduce((sum, v) => sum + parseInt(v.size), 0)
+    .filter(v => v.status === "ready")
+    .reduce((sum, v) => sum + parseInt(v.size, 10), 0)
 
   return (
     <div className={styles.downloadsScreen}>
@@ -48,7 +53,9 @@ function DownloadsScreen() {
         </div>
         <div className={styles.headerText}>
           <h1 className={styles.headerTitle}>Downloads</h1>
-          <p className={styles.headerSubtitle}>2 Videos • Ready to watch offline</p>
+          <p className={styles.headerSubtitle}>
+            {readyCount} Videos • Ready to watch offline
+          </p>
         </div>
       </div>
 
@@ -76,13 +83,14 @@ function DownloadsScreen() {
 function VideoCard({ title, author, subject, size, thumbnail, status, progress }) {
   return (
     <div className={styles.videoCard}>
-      {/* Thumbnail */}
       <div className={styles.thumbnailContainer}>
-        <img src={thumbnail} alt={title} className={styles.thumbnail} />
-        <div className={styles.playOverlay}>
+        <img src={thumbnail} alt={title} className={styles.thumbnail} loading="lazy" />
+
+        <button type="button" className={styles.playOverlay} aria-label={`Play ${title}`}>
           <Play size={32} color="#fff" fill="#fff" />
-        </div>
-        {status === 'ready' && (
+        </button>
+
+        {status === "ready" && (
           <div className={styles.readyBadge}>
             <CheckCircle size={14} />
             <span>Ready to watch</span>
@@ -90,7 +98,6 @@ function VideoCard({ title, author, subject, size, thumbnail, status, progress }
         )}
       </div>
 
-      {/* Info */}
       <div className={styles.videoInfo}>
         <h3 className={styles.videoTitle}>{title}</h3>
         <div className={styles.videoMeta}>
@@ -101,14 +108,10 @@ function VideoCard({ title, author, subject, size, thumbnail, status, progress }
         <div className={styles.videoSize}>{size}</div>
       </div>
 
-      {/* Status */}
-      {status === 'downloading' && (
+      {status === "downloading" && (
         <div className={styles.downloadProgress}>
           <div className={styles.progressBar}>
-            <div 
-              className={styles.progressFill} 
-              style={{ width: `${progress}%` }}
-            ></div>
+            <div className={styles.progressFill} style={{ width: `${progress}%` }} />
           </div>
           <div className={styles.progressInfo}>
             <Download size={14} />

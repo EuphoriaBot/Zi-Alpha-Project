@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { ArrowLeft } from "lucide-react"
 import styles from "./BoardGameScreen.module.css"
 import BoardTile from "./components/BoardTile"
 import Dice from "./components/Dice"
@@ -6,7 +7,7 @@ import BoardOverlay from "./components/BoardOverlay"
 import QuestionModal from "./components/QuestionModal"
 import questions from "./data/Questions"
 
-export default function BoardGameScreen() {
+export default function BoardGameScreen({ onBack }) {
   const [position, setPosition] = useState(1)
   const [score, setScore] = useState(0)
   const [diceValue, setDiceValue] = useState(null)
@@ -16,20 +17,23 @@ export default function BoardGameScreen() {
   const ladders = { 6: 17 }
 
   const rollDice = (value) => {
+    if (position >= 25) return
     setDiceValue(value)
     setShowQuestion(true)
   }
 
   const handleAnswer = (selected) => {
     const q = questions[diceValue]
+    if (!q) {
+      setShowQuestion(false)
+      return
+    }
+
     let newScore = score
     let newPos = Math.min(position + diceValue, 25)
 
-    if (selected === q.answer) {
-      newScore += q.point
-    } else {
-      newScore -= q.point
-    }
+    if (selected === q.answer) newScore += q.point
+    else newScore -= q.point
 
     if (snakes[newPos]) newPos = snakes[newPos]
     if (ladders[newPos]) newPos = ladders[newPos]
@@ -39,9 +43,25 @@ export default function BoardGameScreen() {
     setShowQuestion(false)
   }
 
+  const isWin = position >= 25
+
   return (
     <div className={styles.container}>
-      <h2 className={styles.title}>Edu Board Quest</h2>
+      <div className={styles.header}>
+        <button
+          type="button"
+          className={styles.backButton}
+          onClick={onBack}
+          aria-label="Kembali"
+          style={{ visibility: onBack ? "visible" : "hidden" }}
+        >
+          <ArrowLeft size={20} />
+        </button>
+
+        <h2 className={styles.title}>Edu Board Quest</h2>
+
+        <div className={styles.headerSpacer} />
+      </div>
 
       <div className={styles.boardWrapper}>
         <div className={styles.boardContainer}>
@@ -54,8 +74,8 @@ export default function BoardGameScreen() {
                   key={tile}
                   number={tile}
                   isPlayer={tile === position}
-                  isSnake={snakes[tile]}
-                  isLadder={ladders[tile]}
+                  isSnake={Boolean(snakes[tile])}
+                  isLadder={Boolean(ladders[tile])}
                 />
               )
             })}
@@ -63,11 +83,12 @@ export default function BoardGameScreen() {
         </div>
       </div>
 
-      <Dice onRoll={rollDice} />
+      {!isWin ? <Dice onRoll={rollDice} /> : <div className={styles.winBox}>🏁 Finish! Kamu menang 🎉</div>}
 
       <div className={styles.info}>
         <span>Posisi: {position}</span>
         <span>Skor: {score}</span>
+        <span>Dice: {diceValue ?? "-"}</span>
       </div>
 
       {showQuestion && (

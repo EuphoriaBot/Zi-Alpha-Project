@@ -3,15 +3,24 @@ import Header from "./shared/components/Header"
 import BottomNav from "./shared/components/BottomNav"
 
 import BerandaScreen from "./features/home/BerandaScreen"
-import ZiAbotScreen from "./features/ziabot/ZiAbotScreen"
+import ZiaBotScreen from "./features/ziabot/ZiaBotScreen"
 import DiskusiScreen from "./features/discussion/DiskusiScreen"
 import ProgressScreen from "./features/progress/ProgressScreen"
 import ProfileScreen from "./features/profile/ProfileScreen"
+
+import BoardGameScreen from "./features/boardGame/BoardGameScreen"
+import ActiveBattlePage from "./features/bossBattle/pages/ActiveBattlePage"
 
 import "./App.css"
 
 function App() {
   const [activeTab, setActiveTab] = useState("beranda")
+
+  // optional: biar bottomnav tetap highlight "progress" saat masuk sub-mode
+  const navActiveTab =
+    activeTab === "bossBattle" || activeTab === "boardGame"
+      ? "progress"
+      : activeTab
 
   const renderScreen = () => {
     switch (activeTab) {
@@ -19,36 +28,39 @@ function App() {
         return <BerandaScreen />
 
       case "ziabot":
-        return <ZiAbotScreen />
+        return <ZiaBotScreen />
 
       case "diskusi":
         return <DiskusiScreen />
 
       case "progress":
-        return <ProgressScreen />
+        return <ProgressScreen setActiveTab={setActiveTab} />
 
       case "profile":
-        return <ProfileScreen />
+        return <ProfileScreen setActiveTab={setActiveTab} />
+
+      // sub-screens dari progress:
+      case "bossBattle":
+        return <ActiveBattlePage onBack={() => setActiveTab("progress")} />
+
+      case "boardGame":
+        return <BoardGameScreen onBack={() => setActiveTab("progress")} />
 
       default:
         return <BerandaScreen />
     }
   }
 
+  // biar nggak double header (karena Diskusi/Profile/ZiaBot punya header sendiri)
+  const showGlobalHeader = activeTab === "beranda"
+
   return (
     <div className="app-container">
+      {showGlobalHeader && <Header />}
 
-      <Header />
+      <main className="main-content">{renderScreen()}</main>
 
-      <main className="main-content">
-        {renderScreen()}
-      </main>
-
-      <BottomNav
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-      />
-
+      <BottomNav activeTab={navActiveTab} setActiveTab={setActiveTab} />
     </div>
   )
 }

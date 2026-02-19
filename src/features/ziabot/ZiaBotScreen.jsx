@@ -1,87 +1,93 @@
-import { useState } from 'react'
-import { ChevronDown, ChevronUp, Send, Paperclip } from 'lucide-react'
-import ChatMessage from '../../shared/components/ChatMessage'
-import { initialMessages } from '../../shared/utils/constants'
-import styles from './ZiaBotScreen.module.css'
+import { useEffect, useMemo, useRef, useState } from "react"
+import { ChevronDown, ChevronUp, Send, Paperclip } from "lucide-react"
+import ChatMessage from "../../shared/components/ChatMessage"
+import { initialMessages } from "../../shared/utils/constants"
+import styles from "./ZiaBotScreen.module.css"
 
 export default function ZiaBotScreen() {
   const [topicOpen, setTopicOpen] = useState(true)
   const [selectedSubject, setSelectedSubject] = useState(null)
   const [selectedClass, setSelectedClass] = useState(null)
-  const [topicInput, setTopicInput] = useState('')
-  const [input, setInput] = useState('')
+  const [topicInput, setTopicInput] = useState("")
+  const [input, setInput] = useState("")
   const [messages, setMessages] = useState(initialMessages)
   const [isTyping, setIsTyping] = useState(false)
 
-  const subjects = [
-    { id: 'matematika', name: 'Matematika', icon: '📐' },
-    { id: 'ipa', name: 'IPA', icon: '🧪' },
-    { id: 'ips', name: 'IPS', icon: '🌍' },
-    { id: 'bahasa-indonesia', name: 'Bahasa Indonesia', icon: '📖' },
-    { id: 'bahasa-inggris', name: 'Bahasa Inggris', icon: '🇬🇧' },
-    { id: 'fisika', name: 'Fisika', icon: '⚡' },
-    { id: 'kimia', name: 'Kimia', icon: '🧬' },
-    { id: 'biologi', name: 'Biologi', icon: '🌿' },
-  ]
+  const bottomRef = useRef(null)
 
-  const classes = ['Kelas 7', 'Kelas 8', 'Kelas 9']
+  const subjects = useMemo(
+    () => [
+      { id: "matematika", name: "Matematika", icon: "📐" },
+      { id: "ipa", name: "IPA", icon: "🧪" },
+      { id: "ips", name: "IPS", icon: "🌍" },
+      { id: "bahasa-indonesia", name: "Bahasa Indonesia", icon: "📖" },
+      { id: "bahasa-inggris", name: "Bahasa Inggris", icon: "🇬🇧" },
+      { id: "fisika", name: "Fisika", icon: "⚡" },
+      { id: "kimia", name: "Kimia", icon: "🧬" },
+      { id: "biologi", name: "Biologi", icon: "🌿" }
+    ],
+    []
+  )
+
+  const classes = useMemo(() => ["Kelas 7", "Kelas 8", "Kelas 9"], [])
 
   const getCurrentTime = () => {
     const now = new Date()
-    return `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`
+    const hh = now.getHours().toString().padStart(2, "0")
+    const mm = now.getMinutes().toString().padStart(2, "0")
+    return `${hh}:${mm}`
   }
 
+  const makeId = () => {
+    if (typeof crypto !== "undefined" && crypto.randomUUID) return crypto.randomUUID()
+    return `${Date.now()}-${Math.random().toString(16).slice(2)}`
+  }
+
+  const pushMessage = (partial) => {
+    const msg = { id: makeId(), time: getCurrentTime(), ...partial }
+    setMessages((prev) => [...prev, msg])
+  }
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" })
+  }, [messages, isTyping])
+
   const applyContext = () => {
-    if (!selectedSubject && !selectedClass && !topicInput) return
-    
-    let contextMsg = '✓ Konteks diterapkan: '
+    const cleanTopic = topicInput.trim()
+    if (!selectedSubject && !selectedClass && !cleanTopic) return
+
     const parts = []
-    if (selectedSubject) parts.push(subjects.find(s => s.id === selectedSubject)?.name)
+    if (selectedSubject) parts.push(subjects.find((s) => s.id === selectedSubject)?.name)
     if (selectedClass) parts.push(selectedClass)
-    if (topicInput) parts.push(`"${topicInput}"`)
-    contextMsg += parts.join(', ')
-    
-    const newMessage = {
-      id: messages.length + 1,
-      type: 'bot',
-      text: contextMsg,
-      time: getCurrentTime()
-    }
-    
-    setMessages(prev => [...prev, newMessage])
+    if (cleanTopic) parts.push(`"${cleanTopic}"`)
+
+    pushMessage({
+      type: "bot",
+      text: `✓ Konteks diterapkan: ${parts.filter(Boolean).join(", ")}`
+    })
+
     setTopicOpen(false)
   }
 
   const send = () => {
-    if (!input.trim()) return
-    
-    const userMessage = {
-      id: messages.length + 1,
-      type: 'user',
-      text: input,
-      time: getCurrentTime()
-    }
-    
-    setMessages(prev => [...prev, userMessage])
-    setInput('')
-    
-    // Simulate bot typing
+    const text = input.trim()
+    if (!text) return
+
+    pushMessage({ type: "user", text })
+    setInput("")
+
     setIsTyping(true)
     setTimeout(() => {
       setIsTyping(false)
-      const botMessage = {
-        id: messages.length + 2,
-        type: 'bot',
-        text: 'Terima kasih atas pertanyaannya! Saya sedang memproses jawaban terbaik untuk Anda...',
-        time: getCurrentTime()
-      }
-      setMessages(prev => [...prev, botMessage])
-    }, 1500)
+      pushMessage({
+        type: "bot",
+        text: "Terima kasih atas pertanyaannya! Saya sedang memproses jawaban terbaik untuk Anda..."
+      })
+    }, 900)
   }
 
   return (
     <div className={styles.ziabotScreen}>
-      {/* Chat Header Info */}
       <div className={styles.chatHeaderInfo}>
         <div className={styles.aiAvatar}>🤖</div>
         <div className={styles.aiInfo}>
@@ -90,16 +96,18 @@ export default function ZiaBotScreen() {
         </div>
       </div>
 
-      {/* Description */}
       <div className={styles.ziabotDescription}>
-        <p>ZiAbot membantu kamu belajar step by step. Jawaban bukan untuk langsung dikasih, tapi untuk dipahami.</p>
+        <p>
+          ZiAbot membantu kamu belajar step by step. Jawaban bukan untuk langsung dikasih,
+          tapi untuk dipahami.
+        </p>
       </div>
 
-      {/* Topic Selection */}
       <div className={styles.topicSelectionContainer}>
         <button
+          type="button"
           className={styles.topicHeader}
-          onClick={() => setTopicOpen(!topicOpen)}
+          onClick={() => setTopicOpen((v) => !v)}
         >
           <div className={styles.topicHeaderContent}>
             <span className={styles.topicIcon}>📚</span>
@@ -113,15 +121,19 @@ export default function ZiaBotScreen() {
 
         {topicOpen && (
           <div className={styles.topicContent}>
-            {/* Subjects */}
             <div className={styles.topicSection}>
               <h5 className={styles.sectionTitle}>MATA PELAJARAN</h5>
               <div className={styles.subjectsGrid}>
-                {subjects.map(subject => (
+                {subjects.map((subject) => (
                   <button
                     key={subject.id}
-                    className={`${styles.subjectBtn} ${selectedSubject === subject.id ? styles.active : ''}`}
-                    onClick={() => setSelectedSubject(subject.id)}
+                    type="button"
+                    className={`${styles.subjectBtn} ${
+                      selectedSubject === subject.id ? styles.active : ""
+                    }`}
+                    onClick={() =>
+                      setSelectedSubject((prev) => (prev === subject.id ? null : subject.id))
+                    }
                   >
                     <span className={styles.subjectIcon}>{subject.icon}</span>
                     <span className={styles.subjectName}>{subject.name}</span>
@@ -130,15 +142,17 @@ export default function ZiaBotScreen() {
               </div>
             </div>
 
-            {/* Class */}
             <div className={styles.topicSection}>
               <h5 className={styles.sectionTitle}>KELAS</h5>
               <div className={styles.classGrid}>
-                {classes.map(cls => (
+                {classes.map((cls) => (
                   <button
                     key={cls}
-                    className={`${styles.classBtn} ${selectedClass === cls ? styles.active : ''}`}
-                    onClick={() => setSelectedClass(cls)}
+                    type="button"
+                    className={`${styles.classBtn} ${
+                      selectedClass === cls ? styles.active : ""
+                    }`}
+                    onClick={() => setSelectedClass((prev) => (prev === cls ? null : cls))}
                   >
                     {cls}
                   </button>
@@ -146,7 +160,6 @@ export default function ZiaBotScreen() {
               </div>
             </div>
 
-            {/* Topic Input */}
             <div className={styles.topicSection}>
               <h5 className={styles.sectionTitle}>TOPIK / MATERI</h5>
               <div className={styles.topicInputContainer}>
@@ -160,20 +173,18 @@ export default function ZiaBotScreen() {
               </div>
             </div>
 
-            {/* Apply Button */}
-            <button className={styles.applyContextBtn} onClick={applyContext}>
+            <button type="button" className={styles.applyContextBtn} onClick={applyContext}>
               ✓ Terapkan Konteks
             </button>
           </div>
         )}
       </div>
 
-      {/* Chat Messages */}
       <div className={styles.chatMessages}>
         {messages.map((message) => (
           <ChatMessage key={message.id} message={message} />
         ))}
-        
+
         {isTyping && (
           <div className={styles.typingContainer}>
             <div className={styles.messageAvatar}>🤖</div>
@@ -186,21 +197,29 @@ export default function ZiaBotScreen() {
             </div>
           </div>
         )}
+
+        <div ref={bottomRef} />
       </div>
 
-      {/* Chat Input */}
       <div className={styles.chatInputContainer}>
-        <button className={styles.attachBtn}>
+        <button type="button" className={styles.attachBtn} aria-label="Lampirkan">
           <Paperclip size={20} />
         </button>
+
         <input
           className={styles.chatInput}
           placeholder="Tanya ZiA sesuatu..."
           value={input}
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && send()}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault()
+              send()
+            }
+          }}
         />
-        <button className={styles.sendBtn} onClick={send}>
+
+        <button type="button" className={styles.sendBtn} onClick={send} aria-label="Kirim">
           <Send size={20} />
         </button>
       </div>
