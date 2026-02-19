@@ -7,6 +7,8 @@ import {
   Volume2,
   VolumeX,
   Play,
+  X,
+  Send,
 } from "lucide-react"
 import { contentData } from "../../shared/data/contentData"
 
@@ -33,7 +35,7 @@ export default function BerandaScreen() {
   // progress video aktif (0..1)
   const [progress, setProgress] = useState(0)
 
-  // like state lokal (biar berasa real)
+  // like state lokal
   const [likedMap, setLikedMap] = useState(() => {
     const init = {}
     for (const v of videos) init[v.id] = false
@@ -47,6 +49,22 @@ export default function BerandaScreen() {
 
   // heart burst anim per video id
   const [heartBurst, setHeartBurst] = useState({}) // { [id]: { x,y, key } }
+
+  // COMMENT DRAWER
+  const [commentOpen, setCommentOpen] = useState(false)
+  const [commentText, setCommentText] = useState("")
+  const [commentsByVideo, setCommentsByVideo] = useState(() => {
+    // dummy awal per video
+    const init = {}
+    for (const v of videos) {
+      init[v.id] = [
+        { id: 1, user: "Budi", text: "Wih jelas banget 🔥", time: "1m" },
+        { id: 2, user: "Siti", text: "Aku baru paham sekarang!", time: "3m" },
+        { id: 3, user: "Rizky", text: "Bisa bahas contoh realnya?", time: "6m" },
+      ]
+    }
+    return init
+  })
 
   const containerRef = useRef(null)
   const lockRef = useRef(false)
@@ -72,6 +90,9 @@ export default function BerandaScreen() {
     if (!el) return
 
     const onWheel = (e) => {
+      // kalau comment drawer lagi open, jangan geser feed
+      if (commentOpen) return
+
       e.preventDefault()
       wheelAccumRef.current += e.deltaY
 
@@ -89,29 +110,37 @@ export default function BerandaScreen() {
 
     el.addEventListener("wheel", onWheel, { passive: false })
     return () => el.removeEventListener("wheel", onWheel)
-  }, [videos.length])
+  }, [videos.length, commentOpen])
 
   // ====== INPUT: KEYBOARD ======
   useEffect(() => {
     const onKey = (e) => {
+      if (e.key === "Escape" && commentOpen) {
+        setCommentOpen(false)
+        return
+      }
+      if (commentOpen) return
+
       if (e.key === "ArrowDown") withLock(goNext)
       if (e.key === "ArrowUp") withLock(goPrev)
     }
     window.addEventListener("keydown", onKey)
     return () => window.removeEventListener("keydown", onKey)
-  }, [videos.length])
+  }, [videos.length, commentOpen])
 
   // ====== INPUT: TOUCH SWIPE ======
   const touchStartYRef = useRef(null)
   const touchDeltaYRef = useRef(0)
 
   const onTouchStart = (e) => {
+    if (commentOpen) return
     if (!e.touches?.length) return
     touchStartYRef.current = e.touches[0].clientY
     touchDeltaYRef.current = 0
   }
 
   const onTouchMove = (e) => {
+    if (commentOpen) return
     if (touchStartYRef.current == null) return
     const y = e.touches[0].clientY
     touchDeltaYRef.current = y - touchStartYRef.current
@@ -119,6 +148,8 @@ export default function BerandaScreen() {
   }
 
   const onTouchEnd = () => {
+    if (commentOpen) return
+
     const delta = touchDeltaYRef.current
     touchStartYRef.current = null
     touchDeltaYRef.current = 0
@@ -138,19 +169,18 @@ export default function BerandaScreen() {
 
     videoRefs.current.forEach((vidEl, idx) => {
       if (!vidEl) return
-
       const isActive = idx === currentIndex
 
-      if (isActive) {
+      if (isActive && !commentOpen) {
         vidEl.muted = muted
         const p = vidEl.play()
         if (p && typeof p.catch === "function") p.catch(() => {})
       } else {
         vidEl.pause()
-        vidEl.currentTime = 0
+        if (!commentOpen) vidEl.currentTime = 0
       }
     })
-  }, [currentIndex, muted])
+  }, [currentIndex, muted, commentOpen])
 
   // ====== PROGRESS BAR untuk video aktif ======
   useEffect(() => {
@@ -181,7 +211,7 @@ export default function BerandaScreen() {
     setLikedMap((prev) => {
       const next = { ...prev }
       const already = !!next[videoId]
-      next[videoId] = true // double tap selalu like (bukan toggle)
+      next[videoId] = true
       if (!already) {
         setLikeCountMap((prevCount) => ({
           ...prevCount,
@@ -202,7 +232,6 @@ export default function BerandaScreen() {
     window.setTimeout(() => {
       setHeartBurst((prev) => {
         const copy = { ...prev }
-        // hapus only if still same key
         if (copy[videoId]?.key === key) delete copy[videoId]
         return copy
       })
@@ -210,7 +239,8 @@ export default function BerandaScreen() {
   }
 
   const handleTapOnSlide = (e, idx) => {
-    // posisi tap untuk heart burst
+    if (commentOpen) return
+
     const rect = e.currentTarget.getBoundingClientRect()
     const x = e.clientX - rect.left
     const y = e.clientY - rect.top
@@ -224,7 +254,6 @@ export default function BerandaScreen() {
     if (!video) return
 
     if (isDouble) {
-      // cancel single tap action
       if (singleTapTimerRef.current) {
         clearTimeout(singleTapTimerRef.current)
         singleTapTimerRef.current = null
@@ -235,7 +264,6 @@ export default function BerandaScreen() {
       return
     }
 
-    // single tap => toggle play/pause, tapi delay sedikit untuk nunggu kemungkinan tap kedua
     singleTapTimerRef.current = window.setTimeout(() => {
       singleTapTimerRef.current = null
       const vidEl = videoRefs.current[idx]
@@ -250,15 +278,46 @@ export default function BerandaScreen() {
   }
 
   // ====== performa: video element hanya untuk idx dekat (prev/current/next) ======
-  const shouldMountVideo = (idx) => {
-    return Math.abs(idx - currentIndex) <= 1
-  }
+  const shouldMountVideo = (idx) => Math.abs(idx - currentIndex) <= 1
 
   const getPreloadValue = (idx) => {
     if (idx === currentIndex) return "auto"
-    if (idx === currentIndex + 1) return "auto" // preload next
+    if (idx === currentIndex + 1) return "auto"
     return "metadata"
   }
+
+  const openComments = () => {
+    setCommentOpen(true)
+    setCommentText("")
+  }
+
+  const submitComment = () => {
+    const text = commentText.trim()
+    if (!text) return
+
+    const videoId = videos[currentIndex]?.id
+    if (videoId == null) return
+
+    setCommentsByVideo((prev) => {
+      const list = prev[videoId] ?? []
+      const newItem = {
+        id: Date.now(),
+        user: "Kamu",
+        text,
+        time: "now",
+      }
+      return {
+        ...prev,
+        [videoId]: [newItem, ...list],
+      }
+    })
+
+    setCommentText("")
+  }
+
+  const activeVideo = videos[currentIndex]
+  const activeVideoId = activeVideo?.id
+  const activeComments = activeVideoId != null ? (commentsByVideo[activeVideoId] ?? []) : []
 
   return (
     <div
@@ -269,7 +328,7 @@ export default function BerandaScreen() {
       onTouchEnd={onTouchEnd}
       style={{ touchAction: "none" }}
     >
-      {/* Progress bar tipis (kalau nggak mau, bilang) */}
+      {/* Progress bar tipis */}
       <div className="absolute top-0 left-0 right-0 h-[2px] bg-white/20 z-30">
         <div
           className="h-full bg-white"
@@ -312,7 +371,6 @@ export default function BerandaScreen() {
                   preload={getPreloadValue(idx)}
                 />
               ) : (
-                // far slides: render poster aja supaya ringan
                 <div className="absolute inset-0">
                   {video.thumbnail ? (
                     <img
@@ -327,7 +385,7 @@ export default function BerandaScreen() {
                 </div>
               )}
 
-              {/* overlay buat readability */}
+              {/* overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
 
               {/* tombol mute */}
@@ -342,16 +400,13 @@ export default function BerandaScreen() {
                 <span className="text-xs">{muted ? "Mute" : "Sound"}</span>
               </button>
 
-              {/* heart burst animation */}
+              {/* heart burst */}
               {heartBurst[video.id] && isActive && (
-                <HeartBurst
-                  x={heartBurst[video.id].x}
-                  y={heartBurst[video.id].y}
-                />
+                <HeartBurst x={heartBurst[video.id].x} y={heartBurst[video.id].y} />
               )}
 
-              {/* icon play hint kalau pause (aktif saja) */}
-              {isActive && <PlayHint videoEl={videoRefs.current[idx]} />}
+              {/* play hint */}
+              {isActive && !commentOpen && <PlayHint videoEl={videoRefs.current[idx]} />}
 
               {/* UI */}
               <div className="relative h-full flex flex-col justify-end p-6">
@@ -363,7 +418,6 @@ export default function BerandaScreen() {
                   <div className="flex flex-col items-center">
                     <button
                       onClick={() => {
-                        // toggle like via tombol (optional)
                         setLikedMap((prev) => {
                           const next = { ...prev }
                           const was = !!next[video.id]
@@ -377,16 +431,18 @@ export default function BerandaScreen() {
                       }}
                       className="cursor-pointer hover:scale-110 transition"
                     >
-                      <Heart
-                        size={28}
-                        className={liked ? "fill-white" : ""}
-                      />
+                      <Heart size={28} className={liked ? "fill-white" : ""} />
                     </button>
                     <span className="text-xs mt-1">{likeCount}</span>
                   </div>
 
                   <div className="flex flex-col items-center">
-                    <MessageCircle size={28} className="cursor-pointer hover:scale-110 transition" />
+                    <button
+                      onClick={openComments}
+                      className="cursor-pointer hover:scale-110 transition"
+                    >
+                      <MessageCircle size={28} />
+                    </button>
                     <span className="text-xs mt-1">{video.comments}</span>
                   </div>
 
@@ -413,6 +469,17 @@ export default function BerandaScreen() {
           )
         })}
       </div>
+
+      {/* COMMENT DRAWER */}
+      <CommentDrawer
+        open={commentOpen}
+        onClose={() => setCommentOpen(false)}
+        title={activeVideo?.title ?? "Komentar"}
+        comments={activeComments}
+        value={commentText}
+        onChange={setCommentText}
+        onSend={submitComment}
+      />
     </div>
   )
 }
@@ -465,5 +532,108 @@ function HeartBurst({ x, y }) {
         }
       `}</style>
     </div>
+  )
+}
+
+function CommentDrawer({
+  open,
+  onClose,
+  title,
+  comments,
+  value,
+  onChange,
+  onSend,
+}) {
+  // block body scroll when open (extra safety)
+  useEffect(() => {
+    if (!open) return
+    const prev = document.body.style.overflow
+    document.body.style.overflow = "hidden"
+    return () => {
+      document.body.style.overflow = prev
+    }
+  }, [open])
+
+  return (
+    <>
+      {/* Backdrop */}
+      <div
+        className={`absolute inset-0 z-40 transition-opacity ${
+          open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        }`}
+        onClick={onClose}
+        style={{ background: "rgba(0,0,0,0.55)" }}
+      />
+
+      {/* Sheet */}
+      <div
+        className={`absolute left-0 right-0 bottom-0 z-50 bg-[#0F0F1E] rounded-t-2xl border-t border-white/10
+        transition-transform duration-300 ease-out`}
+        style={{
+          transform: open ? "translateY(0%)" : "translateY(105%)",
+          height: "72%",
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
+          <div className="text-white font-semibold text-sm line-clamp-1">
+            Komentar • {title}
+          </div>
+          <button
+            onClick={onClose}
+            className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white"
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        {/* Comments list */}
+        <div className="h-[calc(100%-112px)] overflow-y-auto px-4 py-3 flex flex-col gap-3">
+          {comments.length === 0 ? (
+            <div className="text-white/60 text-sm text-center mt-10">
+              Belum ada komentar. Jadi yang pertama!
+            </div>
+          ) : (
+            comments.map((c) => (
+              <div key={c.id} className="flex gap-3">
+                <div className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white font-bold">
+                  {String(c.user || "?").slice(0, 1).toUpperCase()}
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <div className="text-white font-semibold text-sm">{c.user}</div>
+                    <div className="text-white/50 text-xs">{c.time}</div>
+                  </div>
+                  <div className="text-white/90 text-sm leading-relaxed">
+                    {c.text}
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Input */}
+        <div className="px-4 py-3 border-t border-white/10 flex items-center gap-2">
+          <input
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder="Tulis komentar..."
+            className="flex-1 bg-white/10 text-white placeholder:text-white/50 px-4 py-3 rounded-full outline-none"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") onSend()
+            }}
+          />
+          <button
+            onClick={onSend}
+            className="w-11 h-11 rounded-full bg-white text-black flex items-center justify-center"
+            title="Kirim"
+          >
+            <Send size={18} />
+          </button>
+        </div>
+      </div>
+    </>
   )
 }
