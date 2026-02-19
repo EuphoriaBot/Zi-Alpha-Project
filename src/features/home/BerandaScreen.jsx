@@ -1,58 +1,36 @@
 import { useEffect, useMemo, useRef, useState } from "react"
-import { Heart, MessageCircle, Bookmark, Share } from "lucide-react"
+import { Heart, MessageCircle, Bookmark, Share, Volume2, VolumeX, Play } from "lucide-react"
+import { contentData } from "../../shared/data/contentData"
 
 export default function BerandaScreen() {
-  const videos = useMemo(
-    () => [
-      {
-        id: 1,
-        title: "useState vs useRef: Jangan Ketuker!",
-        author: "@Zi-Alpha",
-        level: "Beginner",
-        duration: "3:10",
-        likes: 124,
-        comments: 12,
-        saves: 8,
-      },
-      {
-        id: 2,
-        title: "Kenapa React Butuh Key?",
-        author: "@Zi-Alpha",
-        level: "Intermediate",
-        duration: "4:22",
-        likes: 98,
-        comments: 7,
-        saves: 5,
-      },
-      {
-        id: 3,
-        title: "Cara Kerja Virtual DOM",
-        author: "@Zi-Alpha",
-        level: "Advanced",
-        duration: "5:01",
-        likes: 201,
-        comments: 32,
-        saves: 19,
-      },
-    ],
-    []
-  )
+  const videos = useMemo(() => {
+    // mapping contentData ke format feed
+    return contentData.map((v, idx) => ({
+      id: v.id ?? idx,
+      title: v.title,
+      author: v.author ?? "@Zi-Alpha",
+      level: v.level ?? "Beginner",
+      duration: v.duration ?? "0:00",
+      likes: v.stats?.likes ?? 0,
+      comments: v.stats?.comments ?? 0,
+      saves: v.stats?.saves ?? 0,
+      shares: v.stats?.shares ?? 0,
+      videoUrl: v.videoUrl,
+      thumbnail: v.thumbnail,
+    }))
+  }, [])
 
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [muted, setMuted] = useState(true)
 
   const containerRef = useRef(null)
-
-  // anti loncat
   const lockRef = useRef(false)
   const wheelAccumRef = useRef(0)
 
-  // swipe state
-  const touchStartYRef = useRef(null)
-  const touchDeltaYRef = useRef(0)
+  // simpan refs semua video
+  const videoRefs = useRef([])
 
   const clampIndex = (idx) => Math.max(0, Math.min(videos.length - 1, idx))
-
-  const goTo = (idx) => setCurrentIndex(() => clampIndex(idx))
   const goNext = () => setCurrentIndex((prev) => clampIndex(prev + 1))
   const goPrev = () => setCurrentIndex((prev) => clampIndex(prev - 1))
 
@@ -62,17 +40,16 @@ export default function BerandaScreen() {
     fn()
     window.setTimeout(() => {
       lockRef.current = false
-    }, 380) // feel snap
+    }, 380)
   }
 
-  // Wheel only inside feed + prevent page scroll
+  // WHEEL: hanya di container
   useEffect(() => {
     const el = containerRef.current
     if (!el) return
 
     const onWheel = (e) => {
       e.preventDefault()
-
       wheelAccumRef.current += e.deltaY
 
       const THRESHOLD = 60
@@ -91,7 +68,7 @@ export default function BerandaScreen() {
     return () => el.removeEventListener("wheel", onWheel)
   }, [videos.length])
 
-  // Keyboard
+  // KEYBOARD
   useEffect(() => {
     const onKey = (e) => {
       if (e.key === "ArrowDown") withLock(goNext)
@@ -101,7 +78,10 @@ export default function BerandaScreen() {
     return () => window.removeEventListener("keydown", onKey)
   }, [videos.length])
 
-  // Touch swipe
+  // TOUCH SWIPE
+  const touchStartYRef = useRef(null)
+  const touchDeltaYRef = useRef(0)
+
   const onTouchStart = (e) => {
     if (!e.touches?.length) return
     touchStartYRef.current = e.touches[0].clientY
@@ -112,8 +92,6 @@ export default function BerandaScreen() {
     if (touchStartYRef.current == null) return
     const y = e.touches[0].clientY
     touchDeltaYRef.current = y - touchStartYRef.current
-
-    // prevent “pull to refresh / bounce”
     e.preventDefault()
   }
 
@@ -125,11 +103,38 @@ export default function BerandaScreen() {
     const SWIPE_THRESHOLD = 55
     if (Math.abs(delta) < SWIPE_THRESHOLD) return
 
-    // swipe up => next (delta negatif)
     withLock(() => {
       if (delta < 0) goNext()
       else goPrev()
     })
+  }
+
+  // AUTO PLAY/PAUSE: hanya video aktif
+  useEffect(() => {
+    videoRefs.current.forEach((vidEl, idx) => {
+      if (!vidEl) return
+
+      if (idx === currentIndex) {
+        vidEl.muted = muted
+        const p = vidEl.play()
+        // play() kadang reject kalau user belum interaksi; kita ignore
+        if (p && typeof p.catch === "function") p.catch(() => {})
+      } else {
+        vidEl.pause()
+        vidEl.currentTime = 0
+      }
+    })
+  }, [currentIndex, muted])
+
+  const togglePlay = (idx) => {
+    const vidEl = videoRefs.current[idx]
+    if (!vidEl) return
+    if (vidEl.paused) {
+      const p = vidEl.play()
+      if (p && typeof p.catch === "function") p.catch(() => {})
+    } else {
+      vidEl.pause()
+    }
   }
 
   return (
@@ -139,12 +144,9 @@ export default function BerandaScreen() {
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
-      style={{
-        // penting untuk mobile: biar gesture kita gak bentrok sama scroll browser
-        touchAction: "none",
-      }}
+      style={{ touchAction: "none" }}
     >
-      {/* SLIDES WRAPPER (ini yang bikin TikTok-feel) */}
+      {/* SLIDES WRAPPER */}
       <div
         className="absolute inset-0"
         style={{
@@ -152,13 +154,39 @@ export default function BerandaScreen() {
           transition: "transform 360ms cubic-bezier(0.22, 1, 0.36, 1)",
         }}
       >
-        {videos.map((video) => (
-          <div key={video.id} className="relative h-full w-full">
-            {/* "Video" background (dummy) */}
-            <div className="absolute inset-0 bg-gradient-to-b from-indigo-700 via-indigo-900 to-black" />
+        {videos.map((video, idx) => (
+          <div key={video.id} className="relative h-full w-full bg-black">
+            {/* VIDEO */}
+            <video
+              ref={(el) => (videoRefs.current[idx] = el)}
+              src={video.videoUrl || undefined}
+              poster={video.thumbnail || undefined}
+              className="absolute inset-0 h-full w-full object-cover"
+              playsInline
+              loop
+              muted={muted}
+              preload={idx === currentIndex ? "auto" : "metadata"}
+              onClick={() => togglePlay(idx)}
+            />
+
+            {/* Overlay gradient for readability */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
 
-            {/* CONTENT per slide */}
+            {/* Top-right mute button */}
+            <button
+              className="absolute top-4 right-4 z-10 bg-black/40 backdrop-blur px-3 py-2 rounded-full text-white flex items-center gap-2"
+              onClick={() => setMuted((m) => !m)}
+            >
+              {muted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+              <span className="text-xs">{muted ? "Mute" : "Sound"}</span>
+            </button>
+
+            {/* Hint play icon (optional, only show if current video paused) */}
+            {idx === currentIndex && (
+              <PlayHint videoEl={videoRefs.current[idx]} />
+            )}
+
+            {/* CONTENT */}
             <div className="relative h-full flex flex-col justify-end p-6">
               {/* RIGHT ACTIONS */}
               <div className="absolute right-4 bottom-10 flex flex-col items-center gap-7">
@@ -182,19 +210,46 @@ export default function BerandaScreen() {
                 </div>
               </div>
 
-              {/* VIDEO INFO */}
-              <div className="max-w-[80%]">
-                <div className="text-sm opacity-70">{video.author}</div>
-
+              {/* INFO */}
+              <div className="max-w-[80%] text-white">
+                <div className="text-sm opacity-80">{video.author}</div>
                 <div className="text-xl font-bold mt-1">{video.title}</div>
-
-                <div className="text-sm opacity-60 mt-1">
+                <div className="text-sm opacity-70 mt-1">
                   {video.level} • {video.duration}
                 </div>
               </div>
             </div>
           </div>
         ))}
+      </div>
+    </div>
+  )
+}
+
+function PlayHint({ videoEl }) {
+  const [show, setShow] = useState(false)
+
+  useEffect(() => {
+    if (!videoEl) return
+
+    const sync = () => setShow(videoEl.paused)
+    sync()
+
+    videoEl.addEventListener("play", sync)
+    videoEl.addEventListener("pause", sync)
+
+    return () => {
+      videoEl.removeEventListener("play", sync)
+      videoEl.removeEventListener("pause", sync)
+    }
+  }, [videoEl])
+
+  if (!show) return null
+
+  return (
+    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+      <div className="bg-black/35 backdrop-blur p-4 rounded-full">
+        <Play size={40} className="text-white" />
       </div>
     </div>
   )
