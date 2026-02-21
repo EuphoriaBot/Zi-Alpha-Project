@@ -1,10 +1,9 @@
 import { useState } from "react"
 import Header from "./shared/components/Header"
 import BottomNav from "./shared/components/BottomNav"
-
 import BerandaScreen from "./features/home/BerandaScreen"
 import ZiaBotScreen from "./features/ziabot/ZiaBotScreen"
-import DiskusiScreen from "./features/discussion/DiskusiScreen"
+import ExploreScreen from "./features/discussion/ExploreScreen"
 import ProgressScreen from "./features/progress/ProgressScreen"
 import ProfileScreen from "./features/profile/ProfileScreen"
 
@@ -30,8 +29,8 @@ function App() {
       case "ziabot":
         return <ZiaBotScreen />
 
-      case "diskusi":
-        return <DiskusiScreen />
+      case "explore":
+        return <ExploreScreen />
 
       case "progress":
         return <ProgressScreen setActiveTab={setActiveTab} />

@@ -1,0 +1,247 @@
+.screen {
+  min-height: 100%;
+  background: radial-gradient(circle at top, #1b1f4a, #0f122e 60%, #0a0d22);
+  color: white;
+  padding: 14px 14px 18px;
+}
+
+/* TOP AREA */
+.topArea {
+  padding: 8px 6px 10px;
+}
+
+.title {
+  margin: 0 0 10px;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+}
+
+/* SEARCH BAR */
+.searchBar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 14px;
+  padding: 10px 12px;
+}
+
+.searchIcon {
+  opacity: 0.75;
+}
+
+.searchInput {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: rgba(255,255,255,0.92);
+  font-size: 13px;
+}
+
+.searchInput::placeholder {
+  color: rgba(255,255,255,0.45);
+}
+
+/* CHIPS */
+.chipsRow {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.chip {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.10);
+  color: rgba(255,255,255,0.9);
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.chip:hover {
+  background: rgba(255,255,255,0.10);
+}
+
+.chipActive {
+  background: rgba(91,95,227,0.35);
+  border-color: rgba(91,95,227,0.7);
+}
+
+/* SECTION HEADER */
+.sectionHeader {
+  margin-top: 14px;
+  padding: 0 6px;
+}
+
+.sectionTitle {
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  opacity: 0.65;
+}
+
+/* GRID */
+.grid {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 0 6px;
+}
+
+/* CARD */
+.card {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 18px;
+  padding: 12px;
+  box-shadow: 0 12px 26px rgba(0,0,0,0.28);
+  backdrop-filter: blur(10px);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.cardLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.cardIcon {
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: rgba(91,95,227,0.22);
+  border: 1px solid rgba(91,95,227,0.35);
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.cardTitle {
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 120px;
+}
+
+.progressWrap {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.progressLabel {
+  font-size: 10px;
+  opacity: 0.6;
+  font-weight: 800;
+}
+
+.progressValue {
+  margin-top: 2px;
+  font-size: 12px;
+  font-weight: 900;
+  color: rgba(167,139,250,0.95);
+}
+
+/* PROGRESS BAR */
+.progressBar {
+  margin-top: 10px;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.10);
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(91,95,227,1), rgba(167,139,250,1));
+}
+
+/* LESSON LIST */
+.lessonList {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lessonRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 11px;
+  opacity: 0.88;
+}
+
+.lessonName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 120px;
+}
+
+.lessonCount {
+  opacity: 0.7;
+  font-weight: 800;
+}
+
+.lessonEmpty {
+  font-size: 11px;
+  opacity: 0.6;
+}
+
+/* ACTIONS */
+.cardActions {
+  margin-top: 12px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.ziaBtn {
+  flex: 1;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.92);
+  padding: 9px 10px;
+  border-radius: 14px;
+  cursor: pointer;
+  font-weight: 900;
+  font-size: 12px;
+}
+
+.ziaBtn:hover {
+  background: rgba(255,255,255,0.10);
+}
+
+.arrowBtn {
+  width: 40px;
+  height: 36px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.92);
+  cursor: pointer;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.arrowBtn:hover {
+  background: rgba(255,255,255,0.10);
+}

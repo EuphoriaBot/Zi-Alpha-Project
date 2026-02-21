@@ -13,7 +13,7 @@ function BottomNav({ activeTab, setActiveTab }) {
   const navItems = [
     { id: "beranda", label: "Home", icon: Home },
     { id: "ziabot", label: "ZiBot", icon: MessageCircle },
-    { id: "diskusi", label: "Diskusi", icon: MessageSquare },
+    { id: "explore", label: "Explore", icon: MessageSquare },
     { id: "progress", label: "Progress", icon: BarChart3 },
     { id: "profile", label: "Profile", icon: User }
   ]
