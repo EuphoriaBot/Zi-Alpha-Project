@@ -3,7 +3,7 @@ import Header from "./shared/components/Header"
 import BottomNav from "./shared/components/BottomNav"
 import BerandaScreen from "./features/home/BerandaScreen"
 import ZiaBotScreen from "./features/ziabot/ZiaBotScreen"
-import ExploreScreen from "./features/discussion/ExploreScreen"
+import ExploreScreen from "./features/explore/ExploreScreen"
 import ProgressScreen from "./features/progress/ProgressScreen"
 import ProfileScreen from "./features/profile/ProfileScreen"
 

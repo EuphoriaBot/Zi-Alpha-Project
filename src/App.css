@@ -51,23 +51,16 @@ body {
 
 /* MAIN CONTENT (CRITICAL FIX) */
 .main-content {
-
   flex: 1;
-
   min-height: 0;
-
   overflow-y: auto;
-
-  display: flex;
-  flex-direction: column;
-
-  background: transparent;
-
+  overflow-x: hidden;
+  scrollbar-width: none;     
+  -ms-overflow-style: none;  
 }
 
-/* SCROLLBAR STYLE */
 .main-content::-webkit-scrollbar {
-  width: 4px;
+  display: none;          
 }
 
 .main-content::-webkit-scrollbar-track {
