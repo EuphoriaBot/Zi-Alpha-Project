@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react"
-import { Search } from "lucide-react"
+import { Search, Compass } from "lucide-react"
 import styles from "./ExploreScreen.module.css"
 
 export default function ExploreScreen() {
@@ -54,20 +54,6 @@ export default function ExploreScreen() {
         progress: 14,
         lessons: [{ name: "Gerak & Gaya", count: 6 }],
       },
-      {
-        id: "kimia",
-        title: "Kimia",
-        icon: "🧬",
-        progress: 9,
-        lessons: [{ name: "Asam Basa", count: 5 }],
-      },
-      {
-        id: "biologi",
-        title: "Biologi",
-        icon: "🌿",
-        progress: 18,
-        lessons: [{ name: "Sel & Jaringan", count: 7 }],
-      },
     ],
     []
   )
@@ -80,7 +66,6 @@ export default function ExploreScreen() {
   const filteredSubjects = useMemo(() => {
     const q = query.trim().toLowerCase()
     if (!q) return subjects
-
     return subjects.filter((s) => {
       const inTitle = s.title.toLowerCase().includes(q)
       const inLessons = s.lessons.some((l) => l.name.toLowerCase().includes(q))
@@ -90,10 +75,22 @@ export default function ExploreScreen() {
 
   return (
     <div className={styles.screen}>
-      {/* TOP */}
-      <div className={styles.topArea}>
-        <h1 className={styles.title}>Explore</h1>
+      {/* HEADER (samain feel/size kayak ZiAbot) */}
+      <div className={styles.header}>
+        <div className={styles.headerLeft}>
+          <div className={styles.headerIcon}>
+            <Compass size={18} />
+          </div>
 
+          <div className={styles.headerText}>
+            <div className={styles.headerTitle}>Explore</div>
+            <span className={styles.headerBadge}>Discover</span>
+          </div>
+        </div>
+      </div>
+
+      {/* TOP AREA */}
+      <div className={styles.topArea}>
         {/* Search */}
         <div className={styles.searchBar}>
           <Search size={18} className={styles.searchIcon} />
@@ -118,11 +115,11 @@ export default function ExploreScreen() {
             </button>
           ))}
         </div>
-      </div>
 
-      {/* SECTION */}
-      <div className={styles.sectionHeader}>
-        <div className={styles.sectionTitle}>MATA PELAJARAN</div>
+        {/* Section title */}
+        <div className={styles.sectionHeader}>
+          <div className={styles.sectionTitle}>MATA PELAJARAN</div>
+        </div>
       </div>
 
       {/* GRID */}
@@ -138,7 +135,6 @@ export default function ExploreScreen() {
 function SubjectCard({ data, activeClass }) {
   return (
     <div className={styles.card}>
-      {/* header */}
       <div className={styles.cardHeader}>
         <div className={styles.cardLeft}>
           <div className={styles.cardIcon}>{data.icon}</div>
@@ -151,12 +147,10 @@ function SubjectCard({ data, activeClass }) {
         </div>
       </div>
 
-      {/* progress bar */}
       <div className={styles.progressBar}>
         <div className={styles.progressFill} style={{ width: `${data.progress}%` }} />
       </div>
 
-      {/* lessons */}
       <div className={styles.lessonList}>
         {data.lessons.slice(0, 2).map((l) => (
           <div key={l.name} className={styles.lessonRow}>
@@ -164,13 +158,8 @@ function SubjectCard({ data, activeClass }) {
             <div className={styles.lessonCount}>◦ {l.count}</div>
           </div>
         ))}
-
-        {data.lessons.length === 0 && (
-          <div className={styles.lessonEmpty}>Belum ada materi</div>
-        )}
       </div>
 
-      {/* actions */}
       <div className={styles.cardActions}>
         <button
           type="button"
@@ -183,7 +172,7 @@ function SubjectCard({ data, activeClass }) {
         <button
           type="button"
           className={styles.arrowBtn}
-          onClick={() => alert(`(dummy) Buka detail: ${data.title} • ${activeClass}`)}
+          onClick={() => alert(`(dummy) Detail: ${data.title} • ${activeClass}`)}
           aria-label="Open"
         >
           ›
