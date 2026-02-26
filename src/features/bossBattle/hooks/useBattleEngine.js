@@ -1,73 +1,81 @@
-import { useState, useEffect } from "react"
+import { useReducer } from "react"
 
-export function useBattleEngine(initialBoss, initialPlayer) {
-    const [bossShieldHP, setBossShieldHP] = useState(initialBoss.shield)
-    const [bossCoreHP, setBossCoreHP] = useState(initialBoss.core)
-    const [playerHP, setPlayerHP] = useState(initialPlayer.hp)
-    const [combo, setCombo] = useState(0)
-    const [battleLog, setBattleLog] = useState([])
-    const [status, setStatus] = useState("active")
+const MAX_LOGS = 30
 
-    const calculatePlayerDamage = () => 20 + combo * 5
-    const calculateBossDamage = () => 15
+function addLog(logs, text) {
+    return [...logs, { id: `${Date.now()}-${Math.random()}`, text }].slice(-MAX_LOGS)
+}
 
-    const pushLog = (text) => {
-        setBattleLog((prev) => [...prev, text].slice(-30)) // simpan max 30 log terakhir
-    }
+function reducer(state, action) {
+    switch (action.type) {
+        case "ANSWER": {
+            if (state.status !== "active") return state
 
-    const handleAnswer = (isCorrect) => {
-        if (status !== "active") return
+            let next = { ...state }
 
-        if (isCorrect) {
-            const damage = calculatePlayerDamage()
+            if (action.correct) {
+                const damage = 20 + next.combo * 5
 
-            // damage: shield dulu, kalau shield jebol, sisa masuk core
-            if (bossShieldHP > 0) {
-                const shieldAfter = bossShieldHP - damage
-
-                if (shieldAfter > 0) {
-                    setBossShieldHP(shieldAfter)
+                if (next.bossShieldHP > 0) {
+                    const shieldAfter = next.bossShieldHP - damage
+                    if (shieldAfter > 0) {
+                        next.bossShieldHP = shieldAfter
+                    } else {
+                        next.bossShieldHP = 0
+                        const overflow = Math.abs(shieldAfter)
+                        next.bossCoreHP = Math.max(next.bossCoreHP - overflow, 0)
+                    }
                 } else {
-                    setBossShieldHP(0)
-                    const overflow = Math.abs(shieldAfter)
-                    setBossCoreHP((prev) => Math.max(prev - overflow, 0))
+                    next.bossCoreHP = Math.max(next.bossCoreHP - damage, 0)
                 }
+
+                next.combo = next.combo + 1
+                next.logs = addLog(next.logs, `🔥 Player dealt ${damage} damage`)
             } else {
-                setBossCoreHP((prev) => Math.max(prev - damage, 0))
+                const damage = 15
+                next.playerHP = Math.max(next.playerHP - damage, 0)
+                next.combo = 0
+                next.logs = addLog(next.logs, `💥 Boss dealt ${damage} damage`)
             }
 
-            setCombo((prev) => prev + 1)
-            pushLog(`🔥 Player dealt ${damage} damage`)
-        } else {
-            const damage = calculateBossDamage()
+            // status check (dan log 1x)
+            if (next.bossCoreHP <= 0) {
+                next.status = "victory"
+                next.logs = addLog(next.logs, "🏆 Boss defeated!")
+            } else if (next.playerHP <= 0) {
+                next.status = "defeat"
+                next.logs = addLog(next.logs, "💀 Player defeated!")
+            }
 
-            setPlayerHP((prev) => Math.max(prev - damage, 0))
-            setCombo(0)
-            pushLog(`💥 Boss dealt ${damage} damage`)
+            return next
         }
+
+        default:
+            return state
+    }
+}
+
+export function useBattleEngine(initialBoss, initialPlayer) {
+    const [state, dispatch] = useReducer(reducer, {
+        bossShieldHP: initialBoss.shield,
+        bossCoreHP: initialBoss.core,
+        playerHP: initialPlayer.hp,
+        combo: 0,
+        logs: [],
+        status: "active",
+    })
+
+    const handleAnswer = (isCorrect) => {
+        dispatch({ type: "ANSWER", correct: isCorrect })
     }
 
-    useEffect(() => {
-        if (bossCoreHP <= 0 && status === "active") {
-            setStatus("victory")
-            pushLog("🏆 Boss defeated!")
-        }
-    }, [bossCoreHP, status])
-
-    useEffect(() => {
-        if (playerHP <= 0 && status === "active") {
-            setStatus("defeat")
-            pushLog("💀 Player defeated!")
-        }
-    }, [playerHP, status])
-
     return {
-        bossShieldHP,
-        bossCoreHP,
-        playerHP,
-        combo,
-        battleLog,
-        status,
-        handleAnswer
+        bossShieldHP: state.bossShieldHP,
+        bossCoreHP: state.bossCoreHP,
+        playerHP: state.playerHP,
+        combo: state.combo,
+        battleLog: state.logs.map((l) => l.text),
+        status: state.status,
+        handleAnswer,
     }
 }
