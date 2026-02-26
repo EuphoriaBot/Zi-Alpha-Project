@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from "react"
+// src/features/home/BerandaScreen.jsx
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
 import {
   Heart,
   MessageCircle,
@@ -26,6 +27,14 @@ export default function BerandaScreen() {
       shares: v.stats?.shares ?? 0,
       videoUrl: v.videoUrl,
       thumbnail: v.thumbnail,
+
+      // caption ala TikTok/IG
+      caption:
+        v.learningGoal ||
+        v.aiContext?.summary ||
+        v.discussion?.triggerQuestion ||
+        "",
+      tags: Array.isArray(v.discussion?.tags) ? v.discussion.tags : [],
     }))
   }, [])
 
@@ -47,6 +56,13 @@ export default function BerandaScreen() {
     return init
   })
 
+  // caption expand per video id
+  const [captionExpandedMap, setCaptionExpandedMap] = useState(() => {
+    const init = {}
+    for (const v of videos) init[v.id] = false
+    return init
+  })
+
   // heart burst anim per video id
   const [heartBurst, setHeartBurst] = useState({}) // { [id]: { x,y, key } }
 
@@ -54,7 +70,6 @@ export default function BerandaScreen() {
   const [commentOpen, setCommentOpen] = useState(false)
   const [commentText, setCommentText] = useState("")
   const [commentsByVideo, setCommentsByVideo] = useState(() => {
-    // dummy awal per video
     const init = {}
     for (const v of videos) {
       init[v.id] = [
@@ -84,15 +99,13 @@ export default function BerandaScreen() {
     }, 380)
   }
 
-  // ====== INPUT: WHEEL (khusus feed) ======
+  // ====== INPUT: WHEEL ======
   useEffect(() => {
     const el = containerRef.current
     if (!el) return
 
     const onWheel = (e) => {
-      // kalau comment drawer lagi open, jangan geser feed
       if (commentOpen) return
-
       e.preventDefault()
       wheelAccumRef.current += e.deltaY
 
@@ -163,7 +176,7 @@ export default function BerandaScreen() {
     })
   }
 
-  // ====== PLAY/PAUSE hanya video aktif (dan preload next) ======
+  // ====== PLAY/PAUSE hanya video aktif ======
   useEffect(() => {
     setProgress(0)
 
@@ -182,7 +195,7 @@ export default function BerandaScreen() {
     })
   }, [currentIndex, muted, commentOpen])
 
-  // ====== PROGRESS BAR untuk video aktif ======
+  // ====== PROGRESS BAR ======
   useEffect(() => {
     let raf = null
 
@@ -203,7 +216,7 @@ export default function BerandaScreen() {
     }
   }, [currentIndex])
 
-  // ====== DOUBLE TAP LIKE (tanpa ganggu single tap play/pause) ======
+  // ====== DOUBLE TAP LIKE ======
   const lastTapRef = useRef(0)
   const singleTapTimerRef = useRef(null)
 
@@ -277,7 +290,7 @@ export default function BerandaScreen() {
     }, DOUBLE_TAP_MS + 10)
   }
 
-  // ====== performa: video element hanya untuk idx dekat (prev/current/next) ======
+  // ====== performa: mount video hanya prev/current/next ======
   const shouldMountVideo = (idx) => Math.abs(idx - currentIndex) <= 1
 
   const getPreloadValue = (idx) => {
@@ -300,24 +313,29 @@ export default function BerandaScreen() {
 
     setCommentsByVideo((prev) => {
       const list = prev[videoId] ?? []
-      const newItem = {
-        id: Date.now(),
-        user: "Kamu",
-        text,
-        time: "now",
-      }
-      return {
-        ...prev,
-        [videoId]: [newItem, ...list],
-      }
+      const newItem = { id: Date.now(), user: "Kamu", text, time: "now" }
+      return { ...prev, [videoId]: [newItem, ...list] }
     })
 
     setCommentText("")
   }
 
+  const toggleCaption = (videoId) => {
+    setCaptionExpandedMap((prev) => ({
+      ...prev,
+      [videoId]: !prev[videoId],
+    }))
+  }
+
   const activeVideo = videos[currentIndex]
   const activeVideoId = activeVideo?.id
-  const activeComments = activeVideoId != null ? (commentsByVideo[activeVideoId] ?? []) : []
+  const activeComments =
+    activeVideoId != null ? commentsByVideo[activeVideoId] ?? [] : []
+
+  // shadow biar icon kanan selalu kebaca (video putih pun aman)
+  const actionShadowStyle = {
+    filter: "drop-shadow(0 2px 6px rgba(0,0,0,0.85))",
+  }
 
   return (
     <div
@@ -328,7 +346,7 @@ export default function BerandaScreen() {
       onTouchEnd={onTouchEnd}
       style={{ touchAction: "none" }}
     >
-      {/* Progress bar tipis */}
+      {/* Progress bar */}
       <div className="absolute top-0 left-0 right-0 h-[2px] bg-white/20 z-30">
         <div
           className="h-full bg-white"
@@ -351,6 +369,7 @@ export default function BerandaScreen() {
           const isActive = idx === currentIndex
           const liked = !!likedMap[video.id]
           const likeCount = likeCountMap[video.id] ?? video.likes
+          const captionExpanded = !!captionExpandedMap[video.id]
 
           return (
             <div
@@ -358,7 +377,7 @@ export default function BerandaScreen() {
               className="relative h-full w-full bg-black"
               onClick={(e) => handleTapOnSlide(e, idx)}
             >
-              {/* VIDEO (hanya prev/current/next) */}
+              {/* VIDEO */}
               {shouldMountVideo(idx) ? (
                 <video
                   ref={(el) => (videoRefs.current[idx] = el)}
@@ -386,21 +405,23 @@ export default function BerandaScreen() {
               )}
 
               {/* overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
 
-              {/* tombol mute */}
+              {/* mute button */}
               <button
                 className="absolute top-4 right-4 z-30 bg-black/40 backdrop-blur px-3 py-2 rounded-full text-white flex items-center gap-2"
                 onClick={(e) => {
                   e.stopPropagation()
                   setMuted((m) => !m)
                 }}
+                type="button"
+                style={actionShadowStyle}
               >
                 {muted ? <VolumeX size={18} /> : <Volume2 size={18} />}
                 <span className="text-xs">{muted ? "Mute" : "Sound"}</span>
               </button>
 
-              {/* heart burst */}
+              {/* heart burst (✅ sekarang merah) */}
               {heartBurst[video.id] && isActive && (
                 <HeartBurst x={heartBurst[video.id].x} y={heartBurst[video.id].y} />
               )}
@@ -414,9 +435,12 @@ export default function BerandaScreen() {
                 <div
                   className="absolute right-4 bottom-10 flex flex-col items-center gap-7 z-20"
                   onClick={(e) => e.stopPropagation()}
+                  style={actionShadowStyle}
                 >
+                  {/* LIKE */}
                   <div className="flex flex-col items-center">
                     <button
+                      type="button"
                       onClick={() => {
                         setLikedMap((prev) => {
                           const next = { ...prev }
@@ -424,43 +448,83 @@ export default function BerandaScreen() {
                           next[video.id] = !was
                           setLikeCountMap((prevCount) => ({
                             ...prevCount,
-                            [video.id]: (prevCount[video.id] ?? 0) + (was ? -1 : 1),
+                            [video.id]:
+                              (prevCount[video.id] ?? 0) + (was ? -1 : 1),
                           }))
                           return next
                         })
                       }}
-                      className="cursor-pointer hover:scale-110 transition"
+                      className="p-2 rounded-full bg-black/25 backdrop-blur hover:bg-black/35 transition cursor-pointer hover:scale-110"
+                      aria-label="Like"
                     >
-                      <Heart size={28} className={liked ? "fill-white" : ""} />
+                      <Heart
+                        size={28}
+                        className={
+                          liked
+                            ? "text-red-500 fill-red-500"
+                            : "text-white"
+                        }
+                      />
                     </button>
-                    <span className="text-xs mt-1">{likeCount}</span>
+                    <span className="text-xs mt-1 text-white">{likeCount}</span>
                   </div>
 
+                  {/* COMMENT */}
                   <div className="flex flex-col items-center">
                     <button
+                      type="button"
                       onClick={openComments}
-                      className="cursor-pointer hover:scale-110 transition"
+                      className="p-2 rounded-full bg-black/25 backdrop-blur hover:bg-black/35 transition cursor-pointer hover:scale-110"
+                      aria-label="Komentar"
                     >
-                      <MessageCircle size={28} />
+                      <MessageCircle size={28} className="text-white" />
                     </button>
-                    <span className="text-xs mt-1">{video.comments}</span>
+                    <span className="text-xs mt-1 text-white">{video.comments}</span>
                   </div>
 
+                  {/* SAVE */}
                   <div className="flex flex-col items-center">
-                    <Bookmark size={28} className="cursor-pointer hover:scale-110 transition" />
-                    <span className="text-xs mt-1">{video.saves}</span>
+                    <button
+                      type="button"
+                      className="p-2 rounded-full bg-black/25 backdrop-blur hover:bg-black/35 transition cursor-pointer hover:scale-110"
+                      aria-label="Simpan"
+                    >
+                      <Bookmark size={28} className="text-white" />
+                    </button>
+                    <span className="text-xs mt-1 text-white">{video.saves}</span>
                   </div>
 
+                  {/* SHARE */}
                   <div className="flex flex-col items-center">
-                    <Share size={28} className="cursor-pointer hover:scale-110 transition" />
+                    <button
+                      type="button"
+                      className="p-2 rounded-full bg-black/25 backdrop-blur hover:bg-black/35 transition cursor-pointer hover:scale-110"
+                      aria-label="Bagikan"
+                    >
+                      <Share size={28} className="text-white" />
+                    </button>
                   </div>
                 </div>
 
-                {/* info */}
-                <div className="max-w-[80%] text-white">
-                  <div className="text-sm opacity-80">{video.author}</div>
+                {/* info + caption */}
+                <div
+                  className="max-w-[82%] text-white"
+                  onClick={(e) => e.stopPropagation()}
+                  style={actionShadowStyle}
+                >
+                  <div className="text-sm opacity-90 font-medium">{video.author}</div>
+
                   <div className="text-xl font-bold mt-1">{video.title}</div>
-                  <div className="text-sm opacity-70 mt-1">
+
+                  {/* CAPTION (IG/TikTok style: clamp + ...lihat selengkapnya) */}
+                  <CaptionBlock
+                    text={video.caption}
+                    tags={video.tags}
+                    expanded={captionExpanded}
+                    onToggle={() => toggleCaption(video.id)}
+                  />
+
+                  <div className="text-sm opacity-70 mt-2">
                     {video.level} • {video.durationLabel}
                   </div>
                 </div>
@@ -480,6 +544,81 @@ export default function BerandaScreen() {
         onChange={setCommentText}
         onSend={submitComment}
       />
+    </div>
+  )
+}
+
+function CaptionBlock({ text, tags, expanded, onToggle }) {
+  const ref = useRef(null)
+  const [isTruncatable, setIsTruncatable] = useState(false)
+
+  const captionText = (text ?? "").trim()
+  const hashtagText =
+    Array.isArray(tags) && tags.length
+      ? tags.filter(Boolean).map((t) => `#${t}`).join(" ")
+      : ""
+
+  const fullText = [captionText, hashtagText].filter(Boolean).join(" ")
+  if (!fullText) return null
+
+  useLayoutEffect(() => {
+    if (!ref.current) return
+    if (expanded) return
+
+    const el = ref.current
+    const check = () => setIsTruncatable(el.scrollHeight - el.clientHeight > 2)
+
+    requestAnimationFrame(check)
+    window.addEventListener("resize", check)
+    return () => window.removeEventListener("resize", check)
+  }, [fullText, expanded])
+
+  const clampStyle = expanded
+    ? undefined
+    : {
+        display: "-webkit-box",
+        WebkitLineClamp: 2,
+        WebkitBoxOrient: "vertical",
+        overflow: "hidden",
+      }
+
+  return (
+    <div className="mt-2 text-sm leading-relaxed">
+      <div className="relative">
+        <div
+          ref={ref}
+          style={clampStyle}
+          className="opacity-90 pr-24 whitespace-pre-line"
+        >
+          {fullText}
+        </div>
+
+        {isTruncatable && !expanded && (
+          <button
+            type="button"
+            onClick={onToggle}
+            className="absolute bottom-0 right-0 text-white/85 font-semibold hover:text-white"
+            style={{
+              background:
+                "linear-gradient(to right, rgba(0,0,0,0), rgba(0,0,0,0.65) 35%, rgba(0,0,0,0.85))",
+              paddingLeft: 10,
+              paddingRight: 2,
+            }}
+          >
+            … Lihat selengkapnya
+          </button>
+        )}
+      </div>
+
+      {isTruncatable && expanded && (
+        <button
+          type="button"
+          onClick={onToggle}
+          className="mt-1 text-white/75 font-semibold hover:text-white"
+        >
+          Sembunyikan
+        </button>
+      )}
     </div>
   )
 }
@@ -520,7 +659,8 @@ function HeartBurst({ x, y }) {
       style={{ left: x - 28, top: y - 28 }}
     >
       <div className="animate-[heartPop_650ms_ease-out_forwards]">
-        <Heart size={56} className="text-white fill-white drop-shadow" />
+        {/* ✅ heart burst jadi merah */}
+        <Heart size={56} className="text-red-500 fill-red-500 drop-shadow-lg" />
       </div>
 
       <style>{`
@@ -535,16 +675,7 @@ function HeartBurst({ x, y }) {
   )
 }
 
-function CommentDrawer({
-  open,
-  onClose,
-  title,
-  comments,
-  value,
-  onChange,
-  onSend,
-}) {
-  // block body scroll when open (extra safety)
+function CommentDrawer({ open, onClose, title, comments, value, onChange, onSend }) {
   useEffect(() => {
     if (!open) return
     const prev = document.body.style.overflow
@@ -583,6 +714,7 @@ function CommentDrawer({
           <button
             onClick={onClose}
             className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white"
+            type="button"
           >
             <X size={18} />
           </button>
@@ -605,9 +737,7 @@ function CommentDrawer({
                     <div className="text-white font-semibold text-sm">{c.user}</div>
                     <div className="text-white/50 text-xs">{c.time}</div>
                   </div>
-                  <div className="text-white/90 text-sm leading-relaxed">
-                    {c.text}
-                  </div>
+                  <div className="text-white/90 text-sm leading-relaxed">{c.text}</div>
                 </div>
               </div>
             ))
@@ -629,6 +759,7 @@ function CommentDrawer({
             onClick={onSend}
             className="w-11 h-11 rounded-full bg-white text-black flex items-center justify-center"
             title="Kirim"
+            type="button"
           >
             <Send size={18} />
           </button>
