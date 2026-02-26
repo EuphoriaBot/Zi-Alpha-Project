@@ -7,78 +7,115 @@ import {
   Brain,
   Gamepad2,
   Dice6,
-  ChevronRight
+  ChevronRight,
+  BarChart3,
+  Trophy,
 } from "lucide-react"
 
 export default function ProgressScreen({ setActiveTab }) {
+  const achievements = [
+    { icon: "🚀", label: "Fast Start" },
+    { icon: "🏆", label: "Champion" },
+    { icon: "🔥", label: "On Fire" },
+    { icon: "📘", label: "Scholar" },
+    { icon: "⚡", label: "Quick Thinker" },
+    { icon: "🧠", label: "Deep Learner" },
+    { icon: "🎯", label: "Accuracy" },
+    { icon: "💎", label: "Rare Badge" },
+    { icon: "👑", label: "Top Rank" },
+  ]
+
   return (
     <div className={styles.container}>
-      <h2 className={styles.title}>Progress</h2>
-
-      {/* LEVEL CARD */}
-      <div className={styles.levelCard}>
-        <div className={styles.levelRing}>
-          <svg width="60" height="60">
-            <circle cx="30" cy="30" r="26" />
-            <circle cx="30" cy="30" r="26" className={styles.progressCircle} />
-          </svg>
-          <span>12</span>
-        </div>
-
-        <div className={styles.levelInfo}>
-          <strong>2,450 XP</strong>
-          <p>50 XP lagi ke Level 13</p>
-          <div className={styles.progressBar}>
-            <div className={styles.progressFill} />
+      {/* TOP HEADER */}
+      <div className={styles.pageHeader}>
+        <div className={styles.pageTitleRow}>
+          <div className={styles.pageIcon}>
+            <BarChart3 size={18} />
           </div>
+          <div className={styles.pageTitle}>Progress</div>
         </div>
       </div>
 
-      {/* STATS */}
-      <div className={styles.stats}>
-        <Stat icon={<Flame />} value="7" label="Streak" />
-        <Stat icon={<Target />} value="185" label="Missions" />
-        <Stat icon={<Star />} value="450" label="XP" />
+      {/* OVERVIEW CARD */}
+      <div className={styles.overviewCard}>
+        <div className={styles.levelRow}>
+          <div className={styles.levelRing}>
+            <svg width="60" height="60" viewBox="0 0 60 60">
+              <circle cx="30" cy="30" r="26" />
+              <circle cx="30" cy="30" r="26" className={styles.progressCircle} />
+            </svg>
+            <span>12</span>
+          </div>
+
+          <div className={styles.levelInfo}>
+            <div className={styles.xpLine}>
+              <strong>2,450</strong>
+              <span className={styles.xpUnit}>XP</span>
+            </div>
+
+            <p className={styles.levelSub}>50 XP ke Level 13</p>
+
+            <div className={styles.progressBar}>
+              <div className={styles.progressFill} />
+            </div>
+          </div>
+        </div>
+
+        {/* STATS ROW */}
+        <div className={styles.statsRow}>
+          <Stat icon={<Flame size={18} />} value="7" label="Hari Streak" />
+          <Stat icon={<Target size={18} />} value="185" label="Misi Selesai" />
+          <Stat icon={<Star size={18} />} value="450" label="XP Minggu Ini" />
+        </div>
       </div>
 
       {/* ACTION CARDS */}
-      <ActionCard
-        icon={<Swords />}
-        title="Boss Battle"
-        desc="Latihan Concept Boss sekarang"
-        variant="boss"
-        onClick={() => setActiveTab?.("bossBattle")}
-      />
+      <div className={styles.actions}>
+        <ActionCard
+          icon={<Swords size={18} />}
+          title="Boss Battle"
+          desc="Latihan Concept Boss sekarang"
+          variant="boss"
+          onClick={() => setActiveTab?.("bossBattle")}
+        />
 
-      <ActionCard
-        icon={<Brain />}
-        title="Knowledge Arena"
-        desc="Turbo Racing & Tug-of-War"
-        variant="arena"
-      />
+        <ActionCard
+          icon={<Brain size={18} />}
+          title="Knowledge Arena"
+          desc="Turbo Racing & Tug-of-War"
+          variant="arena"
+        />
 
-      <ActionCard
-        icon={<Gamepad2 />}
-        title="Fun Games"
-        desc="Memory, Logic, Pattern & Math"
-        variant="games"
-      />
+        <ActionCard
+          icon={<Gamepad2 size={18} />}
+          title="Fun Games"
+          desc="Memory, Logic, Pattern & lainnya"
+          variant="games"
+        />
 
-      <ActionCard
-        icon={<Dice6 />}
-        title="Edu Board Quest"
-        desc="Gamifikasi ala Ular Tangga"
-        variant="board"
-        onClick={() => setActiveTab?.("boardGame")}
-      />
+        <ActionCard
+          icon={<Dice6 size={18} />}
+          title="Edu Board Quest"
+          desc="Gamifikasi ala Ular Tangga"
+          variant="board"
+          onClick={() => setActiveTab?.("boardGame")}
+        />
+      </div>
 
       {/* ACHIEVEMENTS */}
-      <h3 className={styles.subTitle}>Achievements</h3>
-      <div className={styles.achievements}>
-        <Achievement icon="🚀" label="Fast Start" />
-        <Achievement icon="🏆" label="Champion" />
-        <Achievement icon="🔥" label="On Fire" />
-        <Achievement icon="📘" label="Scholar" />
+      <div className={styles.achHeader}>
+        <div className={styles.achTitle}>ACHIEVEMENTS</div>
+        <div className={styles.achCount}>
+          <Trophy size={14} />
+          <span>48</span>
+        </div>
+      </div>
+
+      <div className={styles.achievementsStrip}>
+        {achievements.map((a) => (
+          <Achievement key={`${a.icon}-${a.label}`} icon={a.icon} label={a.label} />
+        ))}
       </div>
     </div>
   )
@@ -87,9 +124,9 @@ export default function ProgressScreen({ setActiveTab }) {
 function Stat({ icon, value, label }) {
   return (
     <div className={styles.statBox}>
-      {icon}
-      <strong>{value}</strong>
-      <span>{label}</span>
+      <div className={styles.statIcon}>{icon}</div>
+      <div className={styles.statValue}>{value}</div>
+      <div className={styles.statLabel}>{label}</div>
     </div>
   )
 }
@@ -101,12 +138,14 @@ function ActionCard({ icon, title, desc, variant, onClick }) {
       className={`${styles.actionCard} ${styles[variant]}`}
       onClick={onClick}
     >
-      <div className={styles.iconBox}>{icon}</div>
-      <div className={styles.text}>
-        <h4>{title}</h4>
-        <p>{desc}</p>
+      <div className={styles.actionIcon}>{icon}</div>
+
+      <div className={styles.actionText}>
+        <div className={styles.actionTitle}>{title}</div>
+        <div className={styles.actionDesc}>{desc}</div>
       </div>
-      <ChevronRight />
+
+      <ChevronRight className={styles.chev} />
     </button>
   )
 }
@@ -114,8 +153,8 @@ function ActionCard({ icon, title, desc, variant, onClick }) {
 function Achievement({ icon, label }) {
   return (
     <div className={styles.badge}>
-      <span>{icon}</span>
-      <p>{label}</p>
+      <div className={styles.badgeIcon}>{icon}</div>
+      <div className={styles.badgeLabel}>{label}</div>
     </div>
   )
 }

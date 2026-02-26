@@ -1,29 +1,59 @@
 .container {
-  padding: 16px;
+  padding: 14px 14px 18px;
   min-height: 100%;
-  background: linear-gradient(180deg, #0b0d1c, #12142a);
+  background: radial-gradient(circle at top, #1b1f4a, #0f122e 60%, #0a0d22);
   color: white;
 }
 
-.title {
-  font-size: 20px;
-  margin-bottom: 14px;
+/* TOP HEADER */
+.pageHeader {
+  padding: 8px 6px 10px;
 }
 
-/* LEVEL CARD */
-.levelCard {
+.pageTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pageIcon {
+  width: 28px;
+  height: 28px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.10);
+}
+
+.pageTitle {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+}
+
+/* OVERVIEW CARD */
+.overviewCard {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 18px;
+  padding: 14px;
+  box-shadow: 0 12px 26px rgba(0,0,0,0.28);
+  backdrop-filter: blur(10px);
+}
+
+.levelRow {
   display: flex;
   gap: 14px;
-  background: #17182c;
-  padding: 14px;
-  border-radius: 16px;
-  margin-bottom: 14px;
+  align-items: center;
 }
 
+/* LEVEL RING */
 .levelRing {
   position: relative;
   width: 60px;
   height: 60px;
+  flex-shrink: 0;
 }
 
 .levelRing svg {
@@ -32,7 +62,7 @@
 
 .levelRing circle {
   fill: none;
-  stroke: #1f2140;
+  stroke: rgba(255,255,255,0.12);
   stroke-width: 6;
 }
 
@@ -51,116 +81,214 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
+  font-weight: 900;
 }
 
-.levelInfo strong {
-  font-size: 16px;
+/* LEVEL INFO */
+.levelInfo {
+  flex: 1;
+  min-width: 0;
 }
 
-.levelInfo p {
+.xpLine {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  line-height: 1;
+}
+
+.xpLine strong {
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.xpUnit {
   font-size: 12px;
-  color: #aaa;
-  margin: 4px 0;
+  opacity: 0.75;
+  font-weight: 800;
 }
 
+.levelSub {
+  margin: 6px 0 10px;
+  font-size: 12px;
+  opacity: 0.75;
+}
+
+/* Progress bar */
 .progressBar {
-  height: 6px;
-  background: #2a2c44;
-  border-radius: 10px;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.10);
+  overflow: hidden;
 }
 
 .progressFill {
   width: 80%;
   height: 100%;
+  border-radius: 999px;
   background: linear-gradient(90deg, #8b5cf6, #a78bfa);
-  border-radius: 10px;
 }
 
-/* STATS */
-.stats {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 16px;
-}
-
-.statBox {
-  flex: 1;
-  background: #17182c;
-  border-radius: 14px;
-  padding: 10px;
-  text-align: center;
-  font-size: 12px;
-}
-
-.statBox strong {
-  display: block;
-  font-size: 16px;
-}
-
-/* ACTION CARDS */
-.actionCard {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px;
-  border-radius: 16px;
-  margin-bottom: 10px;
-  text-align: left;
-  cursor: pointer;
-  border: none;
-}
-
-.iconBox {
-  background: rgba(255,255,255,0.18);
-  padding: 8px;
-  border-radius: 10px;
-}
-
-.text h4 {
-  margin: 0;
-}
-
-.text p {
-  font-size: 12px;
-  opacity: 0.85;
-  margin: 4px 0 0;
-}
-
-.actionCard svg:last-child {
-  margin-left: auto;
-  opacity: 0.7;
-}
-
-/* CARD COLORS */
-.boss { background: linear-gradient(135deg, #7c6cff, #9f8cff); }
-.arena { background: linear-gradient(135deg, #4facfe, #00cfff); }
-.games { background: linear-gradient(135deg, #ff9a44, #fc6076); }
-.board { background: linear-gradient(135deg, #22c55e, #16a34a); }
-
-/* ACHIEVEMENTS */
-.subTitle {
-  margin: 18px 0 8px;
-}
-
-.achievements {
+/* STATS ROW */
+.statsRow {
+  margin-top: 12px;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
 }
 
-.badge {
-  background: #141528;
-  border: 1.5px solid #facc15;
-  border-radius: 14px;
-  padding: 12px;
+.statBox {
+  background: rgba(0,0,0,0.18);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 12px 10px;
   text-align: center;
-  font-size: 12px;
 }
 
-.badge span {
+.statIcon {
+  opacity: 0.9;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 6px;
+}
+
+.statValue {
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.statLabel {
+  margin-top: 4px;
+  font-size: 10px;
+  opacity: 0.7;
+  font-weight: 800;
+}
+
+/* ACTIONS */
+.actions {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.actionCard {
+  width: 100%;
+  border: none;
+  border-radius: 18px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: 0 12px 26px rgba(0,0,0,0.22);
+}
+
+.actionIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.18);
+  flex-shrink: 0;
+}
+
+.actionText {
+  flex: 1;
+  min-width: 0;
+}
+
+.actionTitle {
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.actionDesc {
+  margin-top: 4px;
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+.chev {
+  opacity: 0.8;
+}
+
+/* Card colors mirip contoh */
+.boss { background: linear-gradient(135deg, #7c6cff, #9f8cff); }
+.arena { background: linear-gradient(135deg, #3b82f6, #06b6d4); }
+.games { background: linear-gradient(135deg, #f59e0b, #ef4444); }
+.board { background: linear-gradient(135deg, #22c55e, #16a34a); }
+
+.actionCard:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.02);
+}
+
+/* ACHIEVEMENTS header */
+.achHeader {
+  margin-top: 14px;
+  padding: 0 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.achTitle {
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  opacity: 0.65;
+}
+
+.achCount {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 900;
+  opacity: 0.85;
+}
+
+/* ACHIEVEMENTS strip (horizontal scroll, tanpa scrollbar) */
+.achievementsStrip {
+  margin-top: 10px;
+  padding: 0 6px;
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 6px;
+
+  scrollbar-width: none;       /* Firefox */
+  -ms-overflow-style: none;    /* IE/Edge lama */
+}
+
+.achievementsStrip::-webkit-scrollbar {
+  display: none;               /* Chrome/Safari/Edge */
+}
+
+.badge {
+  min-width: 92px;
+  scroll-snap-align: start;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 12px 10px;
+  text-align: center;
+  box-shadow: 0 10px 22px rgba(0,0,0,0.20);
+}
+
+.badgeIcon {
   font-size: 22px;
-  display: block;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
+}
+
+.badgeLabel {
+  font-size: 11px;
+  font-weight: 800;
+  opacity: 0.85;
 }
